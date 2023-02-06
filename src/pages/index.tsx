@@ -116,7 +116,7 @@ export default function Index() {
                                         Gitbook
                                     </a>
                                     <a
-                                        href="https://byob.gitbook.io/docs"
+                                        href="https://github.com/rockooor/byob"
                                         target="_blank"
                                         className="inline-flex justify-center rounded-md border border-transparent border-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
