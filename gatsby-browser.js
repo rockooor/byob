@@ -16,7 +16,7 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 export const wrapPageElement = ({ element }) => {
-  const endpoint = 'https://aged-little-layer.solana-mainnet.discover.quiknode.pro/eed2c3519c41276716f43fa05cc959c69aef6448/'
+  const endpoint = process.env.RPC_ENDPOINT
   const wallets = [
     new PhantomWalletAdapter(),
     new SolflareWalletAdapter(),
