@@ -2,7 +2,7 @@ import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapte
 import React, { useState } from 'react';
 import { RouteComponentProps  } from '@reach/router'
 
-import { Action, InitializedAction } from '../../actions/types';
+import { ActionWithUid, InitializedAction } from '../../actions/types';
 import Block from '../ui/Block';
 import ExecTransactionModal from '../ui/ExecTransactionModal';
 import Heading from '../ui/Heading';
@@ -35,7 +35,7 @@ export const Index = (props: RouteComponentProps) => {
         return null;
     }
 
-    const onAddAction = async (action: Action) => {
+    const onAddAction = async (action: ActionWithUid) => {
         const initializedAction = await initialize(connection, anchorWallet, action);
         setActions([...actions, initializedAction])
     };
@@ -81,13 +81,13 @@ export const Index = (props: RouteComponentProps) => {
                 <NewActionButton onAddAction={onAddAction} />
 
                 <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                    {/* <button
+                    <button
                         type="button"
                         onClick={() => shareTransaction(actions)}
-                        className="inline-flex justify-center rounded-md border border-indigo-600 bg-transparent py-2 px-4 text-sm font-medium text-black shadow-sm hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="inline-flex mr-3 justify-center rounded-md border border-indigo-600 bg-transparent py-2 px-4 text-sm font-medium text-black shadow-sm hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Share
-                    </button> */}
+                    </button>
 
                     <button
                         type="button"

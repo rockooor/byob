@@ -3,21 +3,22 @@ import { DocumentPlusIcon, FaceFrownIcon, GlobeAmericasIcon, MagnifyingGlassIcon
 import React, { Fragment, useState } from 'react';
 import { classNames } from '../../helpers/class';
 import actions from '../../actions';
-import { Action } from '../../actions/types';
+import { Action, ActionWithUid } from '../../actions/types';
 
 type Props = {
-    onAddAction: (x: Action) => void;
+    onAddAction: (x: ActionWithUid) => void;
 };
 
 const NewActionButton = (props: Props) => {
     const [query, setQuery] = useState('');
     const [open, setOpen] = useState(false);
 
-    const allActions: Action[] = [Object.values(actions)]
+    const allActions: ActionWithUid[] = Object.entries(actions)
+        .map(protocol => ({ actions: protocol[1], protocolName: protocol[0] }))
+        .map(protocol => Object.entries(protocol.actions).map(action => {
+            return { ...action[1](), uid: `${protocol.protocolName}-${action[0]}` }
+        }))
         .flat()
-        .map(Object.values)
-        .flat()
-        .map((x) => x());
 
     const filteredItems = query
         ? allActions.filter((item) => {
@@ -69,7 +70,7 @@ const NewActionButton = (props: Props) => {
                         >
                             <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                                 <Combobox
-                                    onChange={(item: Action) => {
+                                    onChange={(item: ActionWithUid) => {
                                         props.onAddAction(item);
                                         setOpen(false);
                                     }}

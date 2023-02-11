@@ -55,8 +55,11 @@ export interface Action {
     }>;
 }
 
+export type ActionWithUid = Action & { uid: string };
+
 export type InitializedAction = Awaited<ReturnType<Action['initialize']>> & {
-    id: string,
+    id: string;
+    uid: string;
 
     protocol: Protocol;
     name: string;
