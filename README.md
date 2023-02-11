@@ -8,3 +8,14 @@ Additionally, because everything is happening inside one transaction, it is poss
 
 - Gitbook: [gitbook](https://byob.gitbook.io/docs/)
 - Website: [byob](https://www.byob.so)
+
+## Develop locally
+
+If you want to create an action, it is useful to set up BYOB to work locally. It should be straightforward:
+
+- clone repo
+- `npm install`
+- Put your RPC endpoint in a file called `.env.development`
+- `npm run dev`
+
+If you don't have an RPC endpoint, you can create one for free on e.g. Quicknode.
