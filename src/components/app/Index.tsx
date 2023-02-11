@@ -81,13 +81,13 @@ export const Index = (props: RouteComponentProps) => {
                 <NewActionButton onAddAction={onAddAction} />
 
                 <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
-                    <button
+                    {/* <button
                         type="button"
                         onClick={() => shareTransaction(actions)}
                         className="inline-flex justify-center rounded-md border border-indigo-600 bg-transparent py-2 px-4 text-sm font-medium text-black shadow-sm hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Share
-                    </button>
+                    </button> */}
 
                     <button
                         type="button"
