@@ -43,6 +43,7 @@ export const prioritizeTx = (): Action => {
                             state.setState({
                                 microLamports,
                             }),
+                        defaultValue: () => state.getState().microLamports,
                         name: 'Microlamports',
                         type: ActionType.NUMBER
                     }

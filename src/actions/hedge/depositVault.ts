@@ -260,6 +260,7 @@ export const depositVault = (): Action => {
                             state.setState({
                                 vaultAddress,
                             }),
+                        defaultValue: () => state.getState().vaultAddress,
                         name: 'Vault address',
                         type: ActionType.STRING,
                     },
@@ -268,6 +269,8 @@ export const depositVault = (): Action => {
                             state.setState({
                                 amountToDeposit,
                             }),
+
+                        defaultValue: () => state.getState().amountToDeposit,
                         name: 'Amount collateral to deposit',
                         type: ActionType.NUMBER
                     },
@@ -276,6 +279,7 @@ export const depositVault = (): Action => {
                             state.setState({
                                 amountToWithdraw,
                             }),
+                        defaultValue: () => state.getState().amountToWithdraw,
                         name: 'Amount collateral to withdraw',
                         type: ActionType.NUMBER
                     },
@@ -284,6 +288,7 @@ export const depositVault = (): Action => {
                             state.setState({
                                 amountToRepay,
                             }),
+                        defaultValue: () => state.getState().amountToRepay,
                         name: 'Amount USH to repay',
                         type: ActionType.NUMBER
                     },
@@ -292,6 +297,7 @@ export const depositVault = (): Action => {
                             state.setState({
                                 amountToBorrow,
                             }),
+                        defaultValue: () => state.getState().amountToBorrow,
                         name: 'Amount USH to borrow',
                         type: ActionType.NUMBER
                     },
@@ -301,6 +307,7 @@ export const depositVault = (): Action => {
                                 redeem,
                             }),
                         name: 'Fully redeem (check if amount repay is equal to total debt)',
+                        defaultValue: () => state.getState().redeem,
                         type: ActionType.CHECK
                     },
                     {
@@ -309,6 +316,7 @@ export const depositVault = (): Action => {
                                 liquidate,
                             }),
                         name: 'Fully liquidate (check if amount withdrawn is equal to total debt)',
+                        defaultValue: () => state.getState().liquidate,
                         type: ActionType.CHECK
                     },
                 ],

@@ -230,8 +230,13 @@ export const shareTransaction = async (
     setTransactionModalOpen(true)
     addTransactionMessage("Creating share link")
     const serializedTransaction = actions.map(action => {
+        const state = {
+            ...action.state.getState(),
+            outputs: undefined,
+        };
+
         return {
-            state: action.state.getState(),
+            state,
             uid: action.uid,
         }
     });

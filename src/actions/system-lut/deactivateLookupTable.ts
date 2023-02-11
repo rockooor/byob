@@ -43,6 +43,7 @@ export const deactivateLookupTable = (): Action => {
                             state.setState({
                                 tokenAccount,
                             }),
+                        defaultValue: () => state.getState().tokenAccount,
                         name: 'LUT address',
                         type: ActionType.STRING
                     }

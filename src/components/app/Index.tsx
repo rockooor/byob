@@ -1,5 +1,5 @@
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouteComponentProps  } from '@reach/router'
 
 import { ActionWithUid, InitializedAction } from '../../actions/types';
@@ -10,8 +10,9 @@ import NewActionButton from '../ui/NewActionButton';
 import LUTModal from '../ui/LUTModal';
 import { executeTransaction, shareTransaction } from '../../helpers/transaction';
 import { initialize } from '../../helpers/action';
+import allActions from '../../actions';
 
-export const Index = (props: RouteComponentProps) => {
+export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
     const anchorWallet = useAnchorWallet();
     const { wallet } = useWallet();
@@ -47,6 +48,31 @@ export const Index = (props: RouteComponentProps) => {
             newActions.splice(from, 1, newActions.splice(to, 1, newActions[from])[0]);
             return newActions;
         });
+
+    useEffect(() => {
+        if (!props.hash) {
+            return
+        }
+
+        fetch(`${process.env.BACKEND_ENDPOINT}/get-link/${props.hash}`, {
+            method: 'GET'
+        })
+            .then(x => x.json())
+            .then(async ({ transaction }) => {
+                const actionsToImport = JSON.parse(transaction.data)
+                // Loop over actions, initialize them and set the state
+                return Promise.all(actionsToImport.map(async actionToImport => {
+                    // Find action
+                    const [protocol, name] = actionToImport.uid.split('-')
+                    const currentAction = allActions[protocol][name]()
+                    
+                    const initializedAction = await initialize(connection, anchorWallet, currentAction)
+                    await initializedAction.state.setState(actionToImport.state)
+                    return { ...initializedAction, uid: `${protocol}-${name}` }
+                }))
+            })
+            .then(setActions)
+    }, [props.hash])
 
     return (
         <>

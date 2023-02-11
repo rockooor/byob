@@ -8,6 +8,7 @@ import { getTokenList, Token } from '../../helpers/token';
 type Props = {
     name: string;
     set: (x: any) => void;
+    defaultValue: Token;
 };
 
 const MintInput = (props: Props) => {
@@ -28,6 +29,10 @@ const MintInput = (props: Props) => {
 
     useEffect(() => {
         getTokenList().then(setTokenList);
+
+        if (props.defaultValue) {
+            setSelectedToken(props.defaultValue)
+        }
     }, []);
 
     if (!selectedToken) {

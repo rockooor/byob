@@ -81,6 +81,7 @@ export const psmMint = (): Action => {
                                     }
                                 ]
                             }),
+                        defaultValue: () => state.getState().amountToMint,
                         name: 'Amount of USDC to use for mint',
                         type: ActionType.NUMBER
                     }

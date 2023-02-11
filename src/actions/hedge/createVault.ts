@@ -56,6 +56,7 @@ export const createVault = (): Action => {
                             state.setState({
                                 collateralType,
                             }),
+                        defaultValue: () => state.getState().collateralType,
                         name: 'Collateral to deposit',
                         type: ActionType.DROPDOWN,
                         values: [

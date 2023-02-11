@@ -54,6 +54,7 @@ export const depositAction = (): Action => {
                 inputs: [
                     {
                         set: (pool: string) => state.setState({ pool }),
+                        defaultValue: () => state.getState().pool,
                         name: 'Flash Loan Pool',
                         type: ActionType.DROPDOWN,
                         values: Object.keys(TOKENS.pools).map((it) => {
@@ -65,6 +66,7 @@ export const depositAction = (): Action => {
                     },
                     {
                         set: (amount: number) => state.setState({ amount }),
+                        defaultValue: () => state.getState().amount,
                         name: 'Amount to deposit',
                         type: ActionType.NUMBER
                     }

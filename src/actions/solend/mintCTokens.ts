@@ -20,14 +20,19 @@ interface State extends BaseState {
         name: string;
         value: string;
     }[];
-    _reserve?: SolendReserve;
-    _market?: SolendMarket;
 
     outputs: [{
         name: string;
         value: number;
     }]
 }
+
+type Cache = {
+    _reserve?: SolendReserve;
+    _market?: SolendMarket;
+}
+
+const cache: Cache = {}
 
 const props = {
     protocol: {
@@ -40,7 +45,11 @@ const props = {
 
 const mintTx = async (connection: Connection, anchorWallet: AnchorWallet, state: State) => {
     const ata = await getATA(connection, new PublicKey(state.reserve), anchorWallet.publicKey);
-    const reserve = state._reserve;
+    const market = cache._market || await SolendMarket.initialize(connection, 'production', state.market);
+    const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.reserve);
+    if (!reserve?.stats) {
+        await reserve?.load()
+    }
 
     const token = await getToken(state.reserve);
     if (!token || !reserve) {
@@ -93,8 +102,8 @@ export const mintCTokens = (): Action => {
                             // Get markets and populate the reserve dropdown
                             const marketInfo = await SolendMarket.initialize(connection, 'production', market);
 
+                            cache._market = marketInfo;
                             state.setState({
-                                _market: marketInfo,
                                 _possibleReservesForMarket: marketInfo.reserves
                                     // Filter wSOL because wrapping
                                     .filter((reserve) => reserve.config.liquidityToken.mint !== tokenMints.wSOL)
@@ -104,6 +113,7 @@ export const mintCTokens = (): Action => {
                                     }))
                             });
                         },
+                        defaultValue: () => state.getState().market,
                         name: 'Lending market',
                         type: ActionType.DROPDOWN,
                         values: [
@@ -119,18 +129,19 @@ export const mintCTokens = (): Action => {
                     },
                     {
                         set: async (reserve: string) => {
-                            const market = state.getState()._market;
+                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
                             if (!market) return
 
                             const _reserve = market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === reserve)
                             if (!_reserve) return
                             await _reserve.load();
 
+                            cache._reserve = _reserve;
                             state.setState({
                                 reserve,
-                                _reserve,
                             });
                         },
+                        defaultValue: () => state.getState().reserve,
                         name: 'Reserve',
                         type: ActionType.DROPDOWN,
                         values: '_possibleReservesForMarket' // read values from state
@@ -140,8 +151,12 @@ export const mintCTokens = (): Action => {
                             state.setState({ amountToDeposit });
 
                             // Update amount to deposit
-                            const reserve = state.getState()._reserve;
+                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
+                            const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
                             if (!reserve) return
+                            if (!reserve.stats) {
+                                await reserve.load()
+                            }
                             const reserveStats = reserve.stats;
                             if (!reserveStats) return
                             state.setState((state) => ({
@@ -153,6 +168,7 @@ export const mintCTokens = (): Action => {
                                 ]
                             }));
                         },
+                        defaultValue: () => state.getState().amountToDeposit,
                         name: 'Amount to deposit',
                         type: ActionType.NUMBER
                     }

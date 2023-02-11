@@ -45,6 +45,7 @@ export const closeTokenAccount = (): Action => {
                             state.setState({
                                 tokenAccount,
                             }),
+                        defaultValue: () => state.getState().tokenAccount,
                         name: 'ATA address',
                         type: ActionType.STRING
                     }

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Router } from '@reach/router'
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Index } from '../components/app/Index';
+import { Index } from '../../components/app/Index';
 import { PageProps } from 'gatsby';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/Navbar';
 
 const App = (props: PageProps) => {
     const wallet = useWallet();
@@ -13,6 +13,7 @@ const App = (props: PageProps) => {
             {wallet.publicKey ? (
                 <Router>
                     <Index path="/app" />
+                    <Index path="/app/:hash" />
                 </Router>
             ) : (
                 <div className="min-h-full bg-white px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">

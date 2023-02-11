@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { classNames } from '../../helpers/class';
@@ -7,6 +7,7 @@ type Props = {
     name: string;
     set: (x: any) => void;
     values: { name: string; value: string }[];
+    defaultValue: string | boolean | undefined | number;
 };
 
 export default function DropdownInput(props: Props) {
@@ -16,6 +17,15 @@ export default function DropdownInput(props: Props) {
         setSelectedValue(value.name);
         props.set(value.value);
     };
+
+    useEffect(() => {
+        if (props.defaultValue) {
+            const defaultToSet = props.values.find((value) => value.value === props.defaultValue)
+            if (defaultToSet) {
+                setSelectedValue(defaultToSet.name)
+            }
+        }
+    }, [])
 
     return (
         <Menu as="div" className="relative block text-left">

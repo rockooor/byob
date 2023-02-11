@@ -81,6 +81,7 @@ export const psmRedeem = (): Action => {
                                     }
                                 ]
                             }),
+                        defaultValue: () => state.getState().amountToRedeem,
                         name: 'Amount of USH to use for redeeming',
                         type: ActionType.NUMBER
                     }

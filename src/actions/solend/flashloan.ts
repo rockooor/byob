@@ -105,6 +105,7 @@ export const flashloan = (): Action => {
                                     }))
                             });
                         },
+                        defaultValue: () => state.getState().market,
                         name: 'Lending market',
                         type: ActionType.DROPDOWN,
                         values: [
@@ -122,12 +123,14 @@ export const flashloan = (): Action => {
                         set: (reserve: string) => {
                             state.setState({ reserve });
                         },
+                        defaultValue: () => state.getState().reserve,
                         name: 'Reserve',
                         type: ActionType.DROPDOWN,
                         values: '_possibleReservesForMarket' // read values from state
                     },
                     {
                         set: (amountToBorrow: number) => state.setState({ amountToBorrow }),
+                        defaultValue: () => state.getState().amountToBorrow,
                         name: 'Amount to borrow',
                         type: ActionType.NUMBER
                     }

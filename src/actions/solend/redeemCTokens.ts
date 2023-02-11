@@ -20,8 +20,6 @@ interface State extends BaseState {
         name: string;
         value: string;
     }[];
-    _reserve?: SolendReserve;
-    _market?: SolendMarket;
 
     outputs: [{
         name: string;
@@ -38,9 +36,20 @@ const props = {
     description: 'Redeem cTokens from a particular pool for its underlying collateral.'
 };
 
+type Cache = {
+    _reserve?: SolendReserve;
+    _market?: SolendMarket;
+}
+
+const cache: Cache = {}
+
 const redeemTx = async (connection: Connection, anchorWallet: AnchorWallet, state: State) => {
     const ata = await getATA(connection, new PublicKey(state.reserve), anchorWallet.publicKey);
-    const reserve = state._reserve;
+    const market = cache._market || await SolendMarket.initialize(connection, 'production', state.market);
+    const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.reserve);
+    if (!reserve?.stats) {
+        await reserve?.load()
+    }
 
     const token = await getToken(state.reserve);
     if (!token || !reserve) {
@@ -91,8 +100,8 @@ export const redeemCTokens = (): Action => {
                             // Get markets and populate the reserve dropdown
                             const marketInfo = await SolendMarket.initialize(connection, 'production', market);
 
+                            cache._market = marketInfo;
                             state.setState({
-                                _market: marketInfo,
                                 _possibleReservesForMarket: marketInfo.reserves
                                     // Filter wSOL because wrapping
                                     .filter((reserve) => reserve.config.liquidityToken.mint !== tokenMints.wSOL)
@@ -102,6 +111,7 @@ export const redeemCTokens = (): Action => {
                                     }))
                             });
                         },
+                        defaultValue: () => state.getState().market,
                         name: 'Lending market',
                         type: ActionType.DROPDOWN,
                         values: [
@@ -117,18 +127,19 @@ export const redeemCTokens = (): Action => {
                     },
                     {
                         set: async (reserve: string) => {
-                            const market = state.getState()._market;
+                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
                             if (!market) return
 
                             const _reserve = market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === reserve)
                             if (!_reserve) return
                             await _reserve.load();
 
+                            cache._reserve = _reserve;
                             state.setState({
                                 reserve,
-                                _reserve,
                             });
                         },
+                        defaultValue: () => state.getState().reserve,
                         name: 'Reserve',
                         type: ActionType.DROPDOWN,
                         values: '_possibleReservesForMarket' // read values from state
@@ -138,8 +149,12 @@ export const redeemCTokens = (): Action => {
                             state.setState({ amountToDeposit });
 
                             // Update amount to redeem
-                            const reserve = state.getState()._reserve;
+                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
+                            const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
                             if (!reserve) return
+                            if (!reserve.stats) {
+                                await reserve.load()
+                            }
                             const reserveStats = reserve.stats;
                             if (!reserveStats) return
                             state.setState((state) => ({
@@ -151,6 +166,7 @@ export const redeemCTokens = (): Action => {
                                 ]
                             }));
                         },
+                        defaultValue: () => state.getState().amountToDeposit,
                         name: 'Amount to redeem',
                         type: ActionType.NUMBER
                     }

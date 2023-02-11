@@ -44,6 +44,7 @@ export const closeLookupTable = (): Action => {
                             state.setState({
                                 tokenAccount,
                             }),
+                        defaultValue: () => state.getState().tokenAccount,
                         name: 'LUT address',
                         type: ActionType.STRING
                     }

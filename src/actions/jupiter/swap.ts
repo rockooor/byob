@@ -129,6 +129,7 @@ export const swap = (): Action => {
                             state.setState({ inputToken: mint });
                             debouncedGetBestRoute();
                         },
+                        defaultValue: () => state.getState().inputToken,
                         type: ActionType.MINT
                     },
                     {
@@ -137,6 +138,7 @@ export const swap = (): Action => {
                             state.setState({ outputToken: mint });
                             debouncedGetBestRoute();
                         },
+                        defaultValue: () => state.getState().outputToken,
                         type: ActionType.MINT
                     },
                     {
@@ -145,6 +147,7 @@ export const swap = (): Action => {
                             state.setState({ inputAmount });
                             debouncedGetBestRoute();
                         },
+                        defaultValue: () => state.getState().inputAmount,
                         type: ActionType.NUMBER
                     },
                     {
@@ -153,6 +156,7 @@ export const swap = (): Action => {
                             state.setState({ slippageBps });
                             debouncedGetBestRoute();
                         },
+                        defaultValue: () => state.getState().slippageBps,
                         type: ActionType.NUMBER
                     }
                 ],

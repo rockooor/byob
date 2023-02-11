@@ -4,6 +4,7 @@ import { Action, ActionType, BaseState, InitializedAction } from '../../actions/
 import MintInput from './MintInput';
 import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DropdownInput from './DropdownInput';
+import { Token } from '../../helpers/token';
 
 type Props = {
     initializedAction: InitializedAction;
@@ -70,6 +71,7 @@ const Block: React.FC<Props> = (props) => {
                                         name={input.name}
                                         min="0"
                                         id={input.name}
+                                        defaultValue={input.defaultValue() as string}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
                                 )}
@@ -79,22 +81,31 @@ const Block: React.FC<Props> = (props) => {
                                         onChange={(e) => input.set(e.target.value)}
                                         name={input.name}
                                         id={input.name}
+                                        defaultValue={input.defaultValue() as string}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
                                 )}
-                                {input.type === ActionType.MINT && <MintInput name={input.name} set={input.set} />}
+                                {input.type === ActionType.MINT && (
+                                    <MintInput
+                                        name={input.name}
+                                        set={input.set}
+                                        defaultValue={input.defaultValue() as Token}
+                                    />
+                                )}
                                 {input.type === ActionType.CHECK && (
                                     <input
                                         type="checkbox"
                                         onChange={(e) => input.set(e.target.checked)}
                                         name={input.name}
                                         id={input.name}
+                                        defaultChecked={input.defaultValue() as boolean}
                                         className="mt-1 block w-6 h-6 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     />
                                 )}
                                 {input.type === ActionType.DROPDOWN && input.values && (
                                     <DropdownInput
                                         name={input.name}
+                                        defaultValue={input.defaultValue() as string}
                                         values={
                                             typeof input.values === 'string'
                                                 ? useBoundStore((state) => state[input.values as string])

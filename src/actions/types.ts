@@ -1,5 +1,6 @@
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { AddressLookupTableAccount, Connection, PublicKey, Signer, TransactionInstruction } from '@solana/web3.js';
+import { Token } from '../helpers/token';
 
 export interface BaseState {
     outputs?: {
@@ -18,6 +19,7 @@ export enum ActionType {
 
 type ActionInput = {
     set: (x: any) => void;
+    defaultValue: () => Token | number | string | boolean | undefined;
     name: string;
     type: ActionType;
     values?: { name: string; value: string }[] | string; // string means it's a state thing
