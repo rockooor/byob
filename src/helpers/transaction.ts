@@ -217,3 +217,12 @@ export const executeTransaction = async (
         setTransactionModalOpen(false)
     }
 };
+
+export const shareTransaction = (actions: InitializedAction[]) => {
+    console.log(actions.map(action => {
+        return {
+            ...action,
+            state: action.state.getState()
+        }
+    }))
+}

@@ -1,5 +1,4 @@
 import create from 'zustand/vanilla';
-import { v4 } from 'uuid';
 import { AddressLookupTableProgram, Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -39,7 +38,6 @@ export const closeLookupTable = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (tokenAccount: string) =>
@@ -54,7 +52,6 @@ export const closeLookupTable = (): Action => {
                     cleanupTxs: [await tx(anchorWallet, state.getState().tokenAccount)]
                 }),
                 state,
-                id: v4()
             };
         }
     };

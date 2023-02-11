@@ -1,7 +1,4 @@
 import create from 'zustand/vanilla';
-import { AnchorProvider, BN, Program } from '@project-serum/anchor';
-import { v4 } from 'uuid';
-import { IDL, psmMintUshInstruction, Vault } from 'hedge-web3';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState, InitializedAction } from '../types';
@@ -90,7 +87,6 @@ export const flashloan = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: async (market: string) => {
@@ -138,7 +134,6 @@ export const flashloan = (): Action => {
                 ],
                 createTx: () => mintTx(connection, anchorWallet, state.getState()),
                 state,
-                id: v4()
             };
         }
     };

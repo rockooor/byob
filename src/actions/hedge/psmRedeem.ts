@@ -1,6 +1,5 @@
 import create, { StoreApi } from 'zustand/vanilla';
 import { AnchorProvider, BN, Program } from '@project-serum/anchor';
-import { v4 } from 'uuid';
 import { DecimalFromU128, IDL, psmRedeemUshInstruction, Vault } from 'hedge-web3';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -8,7 +7,6 @@ import { Action, ActionType, BaseState } from '../types';
 import { protocol, TOKENS } from './_tokens';
 import { tokenMints } from '../../helpers/token';
 
-const USDC_DECIMALS = 6;
 const USH_DECIMALS = 9;
 
 interface State extends BaseState {
@@ -71,7 +69,6 @@ export const psmRedeem = (): Action => {
             })
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (amountToRedeem: number) =>
@@ -92,7 +89,6 @@ export const psmRedeem = (): Action => {
                     mainTxs: await Promise.all([redeemTx(program, anchorWallet, state.getState().amountToRedeem)])
                 }),
                 state,
-                id: v4()
             };
         }
     };

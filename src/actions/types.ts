@@ -49,15 +49,16 @@ export interface Action {
         c: Connection,
         w: AnchorWallet
     ) => Promise<{
-        id: string;
         inputs: ActionInput[];
         createTx: () => Promise<CreateTxOutput>;
         state: typeof this.state;
-
-        protocol: Protocol;
-        name: string;
-        description: string;
     }>;
 }
 
-export type InitializedAction = Awaited<ReturnType<Action['initialize']>>;
+export type InitializedAction = Awaited<ReturnType<Action['initialize']>> & {
+    id: string,
+
+    protocol: Protocol;
+    name: string;
+    description: string;
+};

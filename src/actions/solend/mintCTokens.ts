@@ -1,5 +1,4 @@
 import create from 'zustand/vanilla';
-import { v4 } from 'uuid';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -86,7 +85,6 @@ export const mintCTokens = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: async (market: string) => {
@@ -161,7 +159,6 @@ export const mintCTokens = (): Action => {
                 ],
                 createTx: () => mintTx(connection, anchorWallet, state.getState()),
                 state,
-                id: v4()
             };
         }
     };

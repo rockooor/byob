@@ -1,6 +1,5 @@
 import create from 'zustand/vanilla';
 import { AnchorProvider, BN, Program } from '@project-serum/anchor';
-import { v4 } from 'uuid';
 import { CHAINLINK_PROGRAM_ID, createUserReferralAccountInstruction, depositVaultInstruction, findAssociatedTokenAddress, getHedgeMintPublicKey, getLinkedListAccounts, getPoolPublicKeyForMint, getReferralAccountPublicKey, getUserReferralAccountPublicKey, getUshMintPublicKey, getVaultSystemStatePublicKey, getVaultTypeOracleAccountPublicKey, IDL, loanVaultInstruction, repayVaultInstruction, Vault, withdrawVaultInstruction } from 'hedge-web3';
 import { Connection, Keypair, PublicKey, Signer, SystemProgram, TransactionInstruction } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -255,7 +254,6 @@ export const depositVault = (): Action => {
             const program = new Program(IDL, TOKENS.hedgeProgramAccount, provider);
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (vaultAddress: string) =>
@@ -318,7 +316,6 @@ export const depositVault = (): Action => {
                     ...await mintTx(connection, program, anchorWallet, state.getState())
                 }),
                 state,
-                id: v4()
             };
         }
     };

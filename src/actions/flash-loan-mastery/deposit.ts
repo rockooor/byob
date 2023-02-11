@@ -2,7 +2,6 @@ import create from 'zustand/vanilla';
 import { BN } from '@project-serum/anchor';
 import { Connection } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { v4 } from 'uuid';
 import { getATA } from '../../helpers/token';
 import { deposit } from 'flash-loan-mastery';
 import { Action, ActionType, BaseState } from '../types';
@@ -52,7 +51,6 @@ export const depositAction = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (pool: string) => state.setState({ pool }),
@@ -73,7 +71,6 @@ export const depositAction = (): Action => {
                 ],
                 createTx: () => depositIx(connection, anchorWallet, state.getState()),
                 state,
-                id: v4()
             };
         }
     };

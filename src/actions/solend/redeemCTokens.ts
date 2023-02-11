@@ -1,5 +1,4 @@
 import create, { StoreApi } from 'zustand/vanilla';
-import { v4 } from 'uuid';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -84,7 +83,6 @@ export const redeemCTokens = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: async (market: string) => {
@@ -159,7 +157,6 @@ export const redeemCTokens = (): Action => {
                 ],
                 createTx: () => redeemTx(connection, anchorWallet, state.getState()),
                 state,
-                id: v4()
             };
         }
     };

@@ -1,7 +1,5 @@
-import Decimal from 'decimal.js'
-import create, { StoreApi } from 'zustand/vanilla';
+import create from 'zustand/vanilla';
 import { AnchorProvider, BN, Program } from '@project-serum/anchor';
-import { v4 } from 'uuid';
 import { buildCreateVaultTransaction, getVaultTypeAccountPublicKey, IDL, Vault } from 'hedge-web3';
 import { Connection } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
@@ -52,7 +50,6 @@ export const createVault = (): Action => {
             const program = new Program(IDL, TOKENS.hedgeProgramAccount, provider);
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (collateralType: string) =>
@@ -77,7 +74,6 @@ export const createVault = (): Action => {
                     ...await mintTx(connection, program, anchorWallet, state.getState())
                 }),
                 state,
-                id: v4()
             };
         }
     };

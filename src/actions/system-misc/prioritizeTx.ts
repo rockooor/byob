@@ -1,5 +1,4 @@
 import create from 'zustand/vanilla';
-import { v4 } from 'uuid';
 import { ComputeBudgetProgram, Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -38,7 +37,6 @@ export const prioritizeTx = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (microLamports: number) =>
@@ -53,7 +51,6 @@ export const prioritizeTx = (): Action => {
                     setupTxs: [await tx(anchorWallet, state.getState().microLamports)]
                 }),
                 state,
-                id: v4()
             };
         }
     };

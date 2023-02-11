@@ -1,5 +1,4 @@
 import create from 'zustand/vanilla';
-import { v4 } from 'uuid';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -40,7 +39,6 @@ export const closeTokenAccount = (): Action => {
             }));
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (tokenAccount: string) =>
@@ -55,7 +53,6 @@ export const closeTokenAccount = (): Action => {
                     cleanupTxs: [await closeAccountTx(anchorWallet, state.getState().tokenAccount)]
                 }),
                 state,
-                id: v4()
             };
         }
     };

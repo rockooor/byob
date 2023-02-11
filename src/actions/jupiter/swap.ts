@@ -1,6 +1,5 @@
 import create, { StoreApi } from 'zustand/vanilla';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { v4 } from 'uuid';
 import {
     AddressLookupTableAccount,
     Connection,
@@ -123,7 +122,6 @@ export const swap = (): Action => {
             const debouncedGetBestRoute = debounce(() => getBestRoute(state));
 
             return {
-                ...props,
                 inputs: [
                     {
                         name: 'Input token mint',
@@ -160,7 +158,6 @@ export const swap = (): Action => {
                 ],
                 createTx: async () => getSwapTx(connection, anchorWallet, state),
                 state,
-                id: v4()
             };
         }
     };

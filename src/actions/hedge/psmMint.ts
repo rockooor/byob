@@ -1,7 +1,6 @@
 import create, { StoreApi } from 'zustand/vanilla';
 import { AnchorProvider, BN, Program } from '@project-serum/anchor';
-import { v4 } from 'uuid';
-import { DecimalFromU128, findAssociatedTokenAddress, IDL, psmMintUshInstruction, Vault } from 'hedge-web3';
+import { DecimalFromU128, IDL, psmMintUshInstruction, Vault } from 'hedge-web3';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -70,7 +69,6 @@ export const psmMint = (): Action => {
             })
 
             return {
-                ...props,
                 inputs: [
                     {
                         set: (amountToMint: number) =>
@@ -95,7 +93,6 @@ export const psmMint = (): Action => {
                     mainTxs: [await mintTx(connection, program, anchorWallet, state.getState().amountToMint)]
                 }),
                 state,
-                id: v4()
             };
         }
     };
