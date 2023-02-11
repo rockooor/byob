@@ -6,6 +6,7 @@ type Props = {
     setOpen: (x: boolean) => void;
     messages: string[];
     txId?: string;
+    shareLink?: string;
 }
 
 export default function ExecTransactionModal(props: Props) {
@@ -58,6 +59,18 @@ export default function ExecTransactionModal(props: Props) {
                                                     className="underline font-semibold"
                                                 >
                                                     View on Solscan
+                                                </a>
+                                            </p>
+                                        </div>}
+                                        {props.shareLink && <div className="mt-2">
+                                            <p className="text-sm text-gray-500 font-mono">
+                                                <a
+                                                    href={props.shareLink}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="underline font-semibold"
+                                                >
+                                                    Share link
                                                 </a>
                                             </p>
                                         </div>}

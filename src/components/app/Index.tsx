@@ -21,6 +21,7 @@ export const Index = (props: RouteComponentProps) => {
     const [transactionModalMessages, setTransactionModalMessages] = useState<string[]>([])
     const [lutModalOpen, setLutModalOpen] = useState(false);
     const [sentTxId, setSentTxId] = useState<string>()
+    const [shareLink, setShareLink] = useState<string>()
 
     const addTransactionMessage = (message: string) => {
         setTransactionModalMessages(state => [
@@ -83,7 +84,7 @@ export const Index = (props: RouteComponentProps) => {
                 <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                     <button
                         type="button"
-                        onClick={() => shareTransaction(actions)}
+                        onClick={() => shareTransaction(actions, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setShareLink)}
                         className="inline-flex mr-3 justify-center rounded-md border border-indigo-600 bg-transparent py-2 px-4 text-sm font-medium text-black shadow-sm hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Share
@@ -127,6 +128,7 @@ export const Index = (props: RouteComponentProps) => {
                     setOpen={setTransactionModalOpen}
                     messages={transactionModalMessages}
                     txId={sentTxId}
+                    shareLink={shareLink}
                 />
 
                 <LUTModal

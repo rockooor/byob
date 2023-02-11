@@ -150,6 +150,7 @@ export const executeTransaction = async (
     resetTransactionMessages: () => void,
     setSentTxId: (txId: string) => void
 ) => {
+    resetTransactionMessages()
     setTransactionModalOpen(true)
     addTransactionMessage('Building transaction...')
     const latestBlockhash = await connection.getLatestBlockhash('finalized');
@@ -218,11 +219,30 @@ export const executeTransaction = async (
     }
 };
 
-export const shareTransaction = (actions: InitializedAction[]) => {
-    console.log(actions.map(action => {
+export const shareTransaction = async (
+    actions: InitializedAction[],
+    setTransactionModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    addTransactionMessage: (message: string) => void,
+    resetTransactionMessages: () => void,
+    setShareLink: (link: string) => void
+) => {
+    resetTransactionMessages()
+    setTransactionModalOpen(true)
+    addTransactionMessage("Creating share link")
+    const serializedTransaction = actions.map(action => {
         return {
-            ...action,
-            state: action.state.getState()
+            state: action.state.getState(),
+            uid: action.uid,
         }
-    }))
+    });
+
+    // Store the serializedTransaction in table
+    const resultRaw = await fetch(`${process.env.BACKEND_ENDPOINT}/create-link`, {
+        body: JSON.stringify({ data: JSON.stringify(serializedTransaction) }),
+        method: 'POST'
+    })
+    const result = await resultRaw.json() as { hash: string }
+
+    addTransactionMessage("Share link created!")
+    setShareLink(`${process.env.BASE_URL}/app/${result.hash}`)
 }
