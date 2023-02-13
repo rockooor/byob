@@ -12,11 +12,29 @@ export const TOKENS = {
     programId: FLASH_LOAN_MASTERY_PROGRAM_ID,
     referrer: new PublicKey('8JJxe21mwJezmU5y9NxTWUxc9stkEkwcP1deRzL2Kc7s'),
     pools: {
+        ATLAS: {
+            mint: new PublicKey('ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHgiFCUsXx'),
+            decimals: 8,
+            bank: new PublicKey('FnZd8BV5bS7dVxt7dm9rQoNgFHZg4UCaN4oZUVrgkAvZ'),
+            poolShareMint: new PublicKey('6pCiQQkw3eTkYgdgSEPobUEXvuP2SSmvG9cr11szzeBP')
+        },
         BONK: {
             mint: new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263'),
             decimals: 5,
             bank: new PublicKey('pmGBZFCQ3C9mk49naF7Wag4Bjz3KhoJyj6nitq6tEwT'),
             poolShareMint: new PublicKey('EEgkPj5Z4J9KMCFSchiMz9wGusJgw6wqGPMyMJT9hoEZ')
+        },
+        MSOL: {
+            mint: new PublicKey('mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So'),
+            decimals: 9,
+            bank: new PublicKey('Foj91yYCU9mxJREyW7bGrK7kr46PNWW4ZsKQEnbzSxEc'),
+            poolShareMint: new PublicKey('GFR34LCKCnYaR2eYMpXRMKLUWvu16ykDizEpa3LiUmtb')
+        },
+        SHDW: {
+            mint: new PublicKey('SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y'),
+            decimals: 9,
+            bank: new PublicKey('8eCsvooRmAUZHeuVFqSXAA2G24iZQVmgPhZeg1ddtFEb'),
+            poolShareMint: new PublicKey('AM5ozyNKf2FqUxjPyBhprn595kxLUhy2sChpLSVYnhGi')
         },
         SOL: {
             mint: new PublicKey('So11111111111111111111111111111111111111112'),
