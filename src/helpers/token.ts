@@ -13,7 +13,8 @@ export const getATA = async (
     connection: Connection,
     mint: PublicKey,
     owner: PublicKey,
-    allowOwnerOffCurve: boolean = false
+    allowOwnerOffCurve: boolean = false,
+    payer?: PublicKey
 ) => {
     const ata = await getAssociatedTokenAddress(mint, owner, allowOwnerOffCurve);
 
@@ -25,14 +26,14 @@ export const getATA = async (
         owner,
         createTx: !receiverAccount
             ? {
-                ata: ata.toString(),
-                ix: createAssociatedTokenAccountInstruction(
-                  owner, // payer
-                  ata, // ata
-                  owner, // owner
-                  mint // mint
-              )
-            }
+                  ata: ata.toString(),
+                  ix: createAssociatedTokenAccountInstruction(
+                      payer || owner, // payer
+                      ata, // ata
+                      owner, // owner
+                      mint // mint
+                  )
+              }
             : undefined
     };
 };

@@ -24,7 +24,7 @@ export const flashLoanIx = async (connection: Connection, anchorWallet: AnchorWa
     if (!pool) {
         throw 'Pool not found';
     }
-    const referralResult = await getATA(connection, pool.mint, TOKENS.referrer, true);
+    const referralResult = await getATA(connection, pool.mint, TOKENS.referrer, true, anchorWallet.publicKey);
     const { program } = setUp(connection, anchorWallet);
 
     const result = await flashLoan({
