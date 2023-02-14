@@ -1,7 +1,8 @@
-import { Wallet } from "@solana/wallet-adapter-react";
-import { AddressLookupTableAccount, ComputeBudgetProgram, Connection, PublicKey, Signer, TransactionInstruction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
+import { AnchorWallet, useWallet, Wallet } from "@solana/wallet-adapter-react";
+import { AddressLookupTableAccount, ComputeBudgetProgram, Connection, NonceAccount, PublicKey, Signer, SystemProgram, TransactionInstruction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
 import { InitializedAction } from "../actions/types";
-import { createLut, getLocalLuts } from "./lut";
+import { createLut, getLocalLuts, getLocalStorageLutAccounts } from "./lut";
+import { getNonceAccount } from "./nonce";
 
 const KEY_WITHOUT_LUT_LIMIT = 20;
 
@@ -27,6 +28,7 @@ const getKeysWithoutLuts = (txs: TransactionInstruction[], luts: AddressLookupTa
 export const convertActionsToTransactions = async (
     actions: InitializedAction[],
     localStorageLuts: AddressLookupTableAccount[],
+    nonceAccount?: { nonceAccount: NonceAccount, publicKey: PublicKey },
 ) => {
     const atasToCreate: string[] = [];
     const txs: TransactionInstruction[] = [];
@@ -37,15 +39,25 @@ export const convertActionsToTransactions = async (
         actions.map(async (action) => ({ action, output: await action.createTx() }))
     );
 
+    // Fill transactions array, keeping an index into account because we might need the index for flashloans
+    let txIndex = 0;
+    let solendFlashloanBorrowIndex = 0;
+
+    // If there is a nonce account, add it as first in the list
+    if (nonceAccount) {
+        txs.push(SystemProgram.nonceAdvance({
+            noncePubkey: nonceAccount.publicKey,
+            authorizedPubkey: nonceAccount.nonceAccount.authorizedPubkey,
+        }))
+        txIndex += 1;
+    }
+
     // Add maximum compute budget transaction
     const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
         units: 1400000
     });
     txs.push(modifyComputeUnits);
-
-    // Fill transactions array, keeping an index into account because we might need the index for flashloans
-    let txIndex = 1;
-    let solendFlashloanBorrowIndex = 0;
+    txIndex += 1;
 
     // Setup transactions
     for (let i = 0; i < createdTransactions.length; i += 1) {
@@ -143,29 +155,35 @@ export const convertActionsToTransactions = async (
 export const executeTransaction = async (
     connection: Connection,
     wallet: Wallet,
+    signTransaction: ReturnType<typeof useWallet>['signTransaction'],
     actions: InitializedAction[],
+    runWebhook: boolean,
     setErrorLogs: React.Dispatch<React.SetStateAction<string[]>>,
     setTransactionModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
     addTransactionMessage: (message: string) => void,
     resetTransactionMessages: () => void,
-    setSentTxId: (txId: string) => void
+    setSentTxId: (txId: string) => void,
+    setWebhookUrl: (url: string) => void
 ) => {
     resetTransactionMessages()
     setTransactionModalOpen(true)
     addTransactionMessage('Building transaction...')
     const latestBlockhash = await connection.getLatestBlockhash('finalized');
 
-    // Get localStorage luts
-    const localStorageLuts = (await Promise.all(getLocalLuts().map(async (lut) => {
-        try {
-            return connection.getAddressLookupTable(new PublicKey(lut)).then((res) => res.value)
-        } catch (e) {
-            // do nothing
+    // If create webhook, get a nonce account
+    let nonceAccount: { nonceAccount: NonceAccount; publicKey: PublicKey } | undefined;
+    if (runWebhook) {
+        nonceAccount = await getNonceAccount(connection, wallet, addTransactionMessage)
+        if (!nonceAccount) {
+            setErrorLogs(['Please sign the transaction to create a nonce account'])
+            setTransactionModalOpen(false)
+            return;
         }
-        return undefined
-    }))).filter((x): x is AddressLookupTableAccount => !!x)
+    }
 
-    const { txs, luts, keysWithoutLut, extraSigners } = await convertActionsToTransactions(actions, localStorageLuts);
+    // Get localStorage luts
+    const localStorageLuts = await getLocalStorageLutAccounts(connection)
+    const { txs, luts, keysWithoutLut, extraSigners } = await convertActionsToTransactions(actions, localStorageLuts, nonceAccount);
 
     if (keysWithoutLut.length > KEY_WITHOUT_LUT_LIMIT) {
         const chunkSize = 20;
@@ -187,9 +205,14 @@ export const executeTransaction = async (
 
     addTransactionMessage('Simulating transaction...')
 
+    // Create 2 messages, as simulating a transactions with a nonce is not possible
+    // but we do want to simulate what would happen if you execute this now,
+    // so people can see balance changes etc.
     const messageV0 = new TransactionMessage({
         payerKey: wallet.adapter.publicKey!,
-        recentBlockhash: latestBlockhash.blockhash,
+        recentBlockhash: nonceAccount
+            ? nonceAccount.nonceAccount.nonce
+            : latestBlockhash.blockhash,
         instructions: txs
     }).compileToV0Message(luts);
     const transaction = new VersionedTransaction(messageV0);
@@ -199,23 +222,41 @@ export const executeTransaction = async (
     }
 
     const simulate = await connection.simulateTransaction(transaction);
-
-
     if (simulate.value.err && simulate.value.logs) {
         resetTransactionMessages()
         setTransactionModalOpen(false)
         return setErrorLogs(simulate.value.logs.reverse())
     }
 
-    addTransactionMessage('Transaction simulation successful. Sending transaction, please sign the transaction in your wallet')
-
     setErrorLogs([])
-    try {
-        const tx = await wallet.adapter.sendTransaction(transaction, connection);
-        setSentTxId(tx);
-    } catch (e) {
-        setErrorLogs([e.message])
-        setTransactionModalOpen(false)
+    if (nonceAccount) {
+        addTransactionMessage('Transaction simulation successful. Please sign the transaction so it can be saved for later execution')
+        try {
+            const signedTx = await signTransaction!(transaction);
+            const serializedTx = signedTx.serialize()
+
+            // Send this to the backend
+            const resultRaw = await fetch(`${process.env.BACKEND_ENDPOINT}/create-webhook`, {
+                method: 'POST',
+                body: JSON.stringify({ data: JSON.stringify(Object.values(serializedTx)) })
+            })
+            const result = await resultRaw.json() as { id: string }
+            console.log(result)
+
+            setWebhookUrl(`${process.env.BACKEND_ENDPOINT }/run/${result.id}`)
+        } catch (e) {
+            setErrorLogs([e.message])
+            setTransactionModalOpen(false)
+        }
+    } else {
+        addTransactionMessage('Transaction simulation successful. Sending transaction, please sign the transaction in your wallet')
+        try {
+            const tx = await wallet.adapter.sendTransaction(transaction, connection);
+            setSentTxId(tx);
+        } catch (e) {
+            setErrorLogs([e.message])
+            setTransactionModalOpen(false)
+        }
     }
 };
 

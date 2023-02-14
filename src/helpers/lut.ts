@@ -1,7 +1,18 @@
 import { Wallet } from "@solana/wallet-adapter-react";
-import { AddressLookupTableProgram, Connection, PublicKey, Transaction } from "@solana/web3.js";
+import { AddressLookupTableAccount, AddressLookupTableProgram, Connection, PublicKey, Transaction } from "@solana/web3.js";
 
 export const getLocalLuts = (): string[] => JSON.parse(localStorage.getItem("luts") || '[]')
+
+export const getLocalStorageLutAccounts = async (connection: Connection) => {
+    return (await Promise.all(getLocalLuts().map(async (lut) => {
+        try {
+            return connection.getAddressLookupTable(new PublicKey(lut)).then((res) => res.value)
+        } catch (e) {
+            // do nothing
+        }
+        return undefined
+    }))).filter((x): x is AddressLookupTableAccount => !!x)
+}
 
 export const appendLocalLut = (lut: string) => {
     const luts = getLocalLuts()

@@ -11,18 +11,23 @@ import LUTModal from '../ui/LUTModal';
 import { executeTransaction, shareTransaction } from '../../helpers/transaction';
 import { initialize } from '../../helpers/action';
 import allActions from '../../actions';
+import { Switch } from '@headlessui/react';
+import { classNames } from '../../helpers/class';
+import { VersionedTransaction } from '@solana/web3.js';
 
 export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
     const anchorWallet = useAnchorWallet();
-    const { wallet } = useWallet();
+    const { wallet, signTransaction } = useWallet();
     const [actions, setActions] = useState<InitializedAction[]>([]);
     const [errorsLogs, setErrorLogs] = useState<string[]>([]);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
     const [transactionModalMessages, setTransactionModalMessages] = useState<string[]>([])
     const [lutModalOpen, setLutModalOpen] = useState(false);
     const [sentTxId, setSentTxId] = useState<string>()
+    const [webhookUrl, setWebhookUrl] = useState<string>()
     const [shareLink, setShareLink] = useState<string>()
+    const [runWebhook, setRunWebhook] = useState(false)
 
     const addTransactionMessage = (message: string) => {
         setTransactionModalMessages(state => [
@@ -108,6 +113,30 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                 <NewActionButton onAddAction={onAddAction} />
 
                 <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                    <Switch.Group as="div" className="flex items-center justify-end mb-3">
+                        <Switch.Label as="span" className="mr-3">
+                            <span className="text-sm font-medium text-gray-900">
+                                {runWebhook ? 'Sign and run later (create a webhook)' : 'Sign and run immediately'}
+                            </span>
+                        </Switch.Label>
+                        <Switch
+                            checked={runWebhook}
+                            onChange={setRunWebhook}
+                            className={classNames(
+                                runWebhook ? 'bg-blue-600' : 'bg-green-600',
+                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                            )}
+                        >
+                            <span
+                                aria-hidden="true"
+                                className={classNames(
+                                    runWebhook ? 'translate-x-5' : 'translate-x-0',
+                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                                )}
+                            />
+                        </Switch>
+                    </Switch.Group>
+
                     <button
                         type="button"
                         onClick={() => shareTransaction(actions, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setShareLink)}
@@ -118,10 +147,10 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
 
                     <button
                         type="button"
-                        onClick={() => executeTransaction(connection, wallet, actions, setErrorLogs, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setSentTxId)}
+                        onClick={() => executeTransaction(connection, wallet, signTransaction, actions, runWebhook, setErrorLogs, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setSentTxId, setWebhookUrl)}
                         className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Execute
+                        Run
                     </button>
                 </div>
 
@@ -154,6 +183,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                     setOpen={setTransactionModalOpen}
                     messages={transactionModalMessages}
                     txId={sentTxId}
+                    webhookUrl={webhookUrl}
                     shareLink={shareLink}
                 />
 
