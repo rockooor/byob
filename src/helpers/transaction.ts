@@ -1,5 +1,6 @@
+import { createCloseAccountInstruction } from "@solana/spl-token";
 import { AnchorWallet, useWallet, Wallet } from "@solana/wallet-adapter-react";
-import { AddressLookupTableAccount, ComputeBudgetProgram, Connection, NonceAccount, PublicKey, Signer, SystemProgram, TransactionInstruction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
+import { AddressLookupTableAccount, ComputeBudgetProgram, Connection, NonceAccount, NONCE_ACCOUNT_LENGTH, PublicKey, Signer, SystemProgram, TransactionInstruction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
 import { InitializedAction } from "../actions/types";
 import { createLut, getLocalLuts, getLocalStorageLutAccounts } from "./lut";
 import { getNonceAccount } from "./nonce";
@@ -21,11 +22,39 @@ const getKeysWithoutLuts = (txs: TransactionInstruction[], luts: AddressLookupTa
     return keys;
 }
 
+const createCloseNonceAccountTransaction = async (
+    connection: Connection,
+    wallet: Wallet,
+    nonceAccount: { nonceAccount: NonceAccount, publicKey: PublicKey },
+    latestBlockhash: string
+) => {
+    const txs: TransactionInstruction[] = [];
+    const nonceRent = await connection.getMinimumBalanceForRentExemption(
+        NONCE_ACCOUNT_LENGTH,
+    );
+    txs.push(SystemProgram.nonceWithdraw({
+        noncePubkey: nonceAccount.publicKey,
+        authorizedPubkey: nonceAccount.nonceAccount.authorizedPubkey,
+        toPubkey: nonceAccount.nonceAccount.authorizedPubkey,
+        lamports: nonceRent,
+    }))
+
+    const messageV0 = new TransactionMessage({
+        payerKey: wallet.adapter.publicKey!,
+        recentBlockhash: latestBlockhash,
+        instructions: txs
+    }).compileToV0Message();
+    const transaction = new VersionedTransaction(messageV0);
+
+    return transaction;
+}
+
 /**
  * Converts actions to transaction instructions and luts.
  * Also returns all keys not in a LUT so it could be created
  */
 export const convertActionsToTransactions = async (
+    connection: Connection,
     actions: InitializedAction[],
     localStorageLuts: AddressLookupTableAccount[],
     nonceAccount?: { nonceAccount: NonceAccount, publicKey: PublicKey },
@@ -183,7 +212,7 @@ export const executeTransaction = async (
 
     // Get localStorage luts
     const localStorageLuts = await getLocalStorageLutAccounts(connection)
-    const { txs, luts, keysWithoutLut, extraSigners } = await convertActionsToTransactions(actions, localStorageLuts, nonceAccount);
+    const { txs, luts, keysWithoutLut, extraSigners } = await convertActionsToTransactions(connection, actions, localStorageLuts, nonceAccount);
 
     if (keysWithoutLut.length > KEY_WITHOUT_LUT_LIMIT) {
         const chunkSize = 20;
@@ -205,9 +234,6 @@ export const executeTransaction = async (
 
     addTransactionMessage('Simulating transaction...')
 
-    // Create 2 messages, as simulating a transactions with a nonce is not possible
-    // but we do want to simulate what would happen if you execute this now,
-    // so people can see balance changes etc.
     const messageV0 = new TransactionMessage({
         payerKey: wallet.adapter.publicKey!,
         recentBlockhash: nonceAccount
@@ -235,10 +261,28 @@ export const executeTransaction = async (
             const signedTx = await signTransaction!(transaction);
             const serializedTx = signedTx.serialize()
 
+            // Now sign a transaction that closes the nonce account again, so you don't bleed lots of rent fees.
+            // Unfortunately you can't close the nonce account in the same tx, because of this issue:
+            // https://github.com/solana-labs/solana/issues/27832
+            addTransactionMessage('Transaction signed! Please also sign this transaction, which closes the nonce account that you just created and returns the SOL rent fee to you.')
+            const closeNonceTx = await createCloseNonceAccountTransaction(
+                connection,
+                wallet,
+                nonceAccount,
+                latestBlockhash.blockhash
+            )
+            const signedNonceTx = await signTransaction!(closeNonceTx);
+            const serializedNonceTx = signedNonceTx.serialize()
+
             // Send this to the backend
             const resultRaw = await fetch(`${process.env.BACKEND_ENDPOINT}/create-webhook`, {
                 method: 'POST',
-                body: JSON.stringify({ data: JSON.stringify(Object.values(serializedTx)) })
+                body: JSON.stringify({
+                    data: [
+                        JSON.stringify(Object.values(serializedTx)),
+                        JSON.stringify(Object.values(serializedNonceTx)),
+                    ]
+                })
             })
             const result = await resultRaw.json() as { id: string }
             console.log(result)

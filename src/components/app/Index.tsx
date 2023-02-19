@@ -29,6 +29,16 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const [shareLink, setShareLink] = useState<string>()
     const [runWebhook, setRunWebhook] = useState(false)
 
+    useEffect(() => {
+        // If opened, clear all info
+        if (transactionModalOpen) {
+            setTransactionModalMessages([])
+            setSentTxId(undefined)
+            setShareLink(undefined)
+            setWebhookUrl(undefined)
+        }
+    }, [transactionModalOpen])
+
     const addTransactionMessage = (message: string) => {
         setTransactionModalMessages(state => [
             ...state,

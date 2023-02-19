@@ -10,7 +10,7 @@ export interface PoolInfo {
 
 export const TOKENS = {
     programId: FLASH_LOAN_MASTERY_PROGRAM_ID,
-    referrer: new PublicKey('8JJxe21mwJezmU5y9NxTWUxc9stkEkwcP1deRzL2Kc7s'),
+    referrer: new PublicKey(process.env.BYOB_REFERRAL_ACCOUNT!),
     pools: {
         ATLAS: {
             mint: new PublicKey('ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHgiFCUsXx'),

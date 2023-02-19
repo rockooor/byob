@@ -9,7 +9,7 @@ import {
 } from '@solana/web3.js';
 import { Action, ActionType, BaseState } from '../types';
 import { debounce } from '../../helpers/debounce';
-import { Token } from '../../helpers/token';
+import { getATA, Token } from '../../helpers/token';
 
 interface State extends BaseState {
     inputToken?: Token;
@@ -33,7 +33,7 @@ export const getBestRoute = async (state: StoreApi<State>) => {
 
     const { data } = await (
         await fetch(
-            `https://quote-api.jup.ag/v4/quote?inputMint=${inputAddress}&outputMint=${outputAddress}&amount=${inputAmount}&slippageBps=${slippageBps}`
+            `https://quote-api.jup.ag/v4/quote?inputMint=${inputAddress}&outputMint=${outputAddress}&amount=${inputAmount}&slippageBps=${slippageBps}&feeBps=${process.env.JUPITER_SWAP_FEE_BPS}`
         )
     ).json();
 
@@ -52,6 +52,15 @@ export const getBestRoute = async (state: StoreApi<State>) => {
 
 const getSwapTx = async (connection: Connection, wallet: AnchorWallet, state: StoreApi<State>) => {
     const bestRoute = await getBestRoute(state);
+
+    const referralResult = await getATA(
+        connection,
+        new PublicKey(state.getState().outputToken!.address),
+        new PublicKey(process.env.BYOB_REFERRAL_ACCOUNT!),
+        true,
+        wallet.publicKey
+    );
+
     const { swapTransaction } = await (
         await fetch('https://quote-api.jup.ag/v4/swap', {
             method: 'POST',
@@ -61,10 +70,9 @@ const getSwapTx = async (connection: Connection, wallet: AnchorWallet, state: St
             body: JSON.stringify({
                 route: bestRoute,
                 userPublicKey: wallet.publicKey.toString(),
-                wrapUnwrapSOL: true
-                // feeAccount is optional. Use if you want to charge a fee.  feeBps must have been passed in /quote API.
-                // This is the ATA account for the output token where the fee will be sent to. If you are swapping from SOL->USDC then this would be the USDC ATA you want to collect the fee.
-                // feeAccount: "fee_account_public_key"
+                wrapUnwrapSOL: true,
+                feeAccount: referralResult.ata,
+                feeBps: process.env.JUPITER_SWAP_FEE_BPS!
             })
         })
     ).json();
@@ -87,6 +95,7 @@ const getSwapTx = async (connection: Connection, wallet: AnchorWallet, state: St
     const message = TransactionMessage.decompile(transaction.message, { addressLookupTableAccounts });
 
     return {
+        setupTxs: [referralResult.createTx],
         mainTxs: message.instructions.filter(
             (tx) => tx.programId.toString() !== 'ComputeBudget111111111111111111111111111111'
         ),

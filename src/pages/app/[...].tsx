@@ -7,6 +7,16 @@ import Navbar from '../../components/Navbar';
 
 const App = (props: PageProps) => {
     const wallet = useWallet();
+    const [ready, setReady] = React.useState(false);
+
+    React.useEffect(() => {
+        setReady(true);
+    }, [])
+
+    if (!ready) {
+        return null;
+    }
+
     return (
         <>
             <Navbar uri={props.path!} />

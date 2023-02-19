@@ -17,7 +17,7 @@ const MintInput = (props: Props) => {
     const [selectedToken, setSelectedToken] = useState<Token>();
 
     const filteredTokens =
-        query === '' || !tokenList
+        query === '' || query.length <= 2 || !tokenList
             ? []
             : tokenList.filter((token) => {
                 return (
@@ -106,8 +106,8 @@ const MintInput = (props: Props) => {
                     </Combobox.Options>
                 )}
 
-                {query !== '' && filteredTokens.length === 0 && (
-                    <p className="p-4 text-sm text-gray-500">No people found.</p>
+                {query !== '' && query.length > 2 && filteredTokens.length === 0 && (
+                    <p className="p-4 text-sm text-gray-500">No tokens found.</p>
                 )}
             </Combobox>
         );

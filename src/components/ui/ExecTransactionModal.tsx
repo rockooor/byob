@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react'
+import React, { Fragment, useEffect, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ClipboardDocumentIcon } from '@heroicons/react/24/outline';
 
@@ -59,7 +59,7 @@ export default function ExecTransactionModal(props: Props) {
                                 <div className="sm:flex sm:items-start">
                                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                                            Executing Transaction...
+                                            Executing...
                                         </Dialog.Title>
                                         {props.messages.map((message, i) => (
                                             <div key={i} className="mt-2">

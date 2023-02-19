@@ -1,7 +1,7 @@
 import { Wallet } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, NonceAccount, NONCE_ACCOUNT_LENGTH, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
-const createNonceAccount = async (connection: Connection, wallet: Wallet) => {
+const createNonceAccount = async (connection: Connection, wallet: Wallet, addTransactionMessage: (message: string) => void) => {
     const nonceAccount = Keypair.generate();
     const latestBlockhash = await connection.getLatestBlockhash('finalized');
 
@@ -27,35 +27,30 @@ const createNonceAccount = async (connection: Connection, wallet: Wallet) => {
 
     const txResult = await wallet.adapter.sendTransaction(tx, connection);
 
+    addTransactionMessage(`Transaction successful, waiting for finalization.`);
+
     await connection.confirmTransaction({
         blockhash: latestBlockhash.blockhash,
         lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
         signature: txResult,
-    });
+    }, 'finalized');
 
     return { tx, nonceAccount };
 };
 
 
 const getNonceAccountKey = async (connection: Connection, wallet: Wallet, addTransactionMessage: (message: string) => void) => {
-    const storedNonceAccount = localStorage.getItem('nonceAccount')
-
-    if (storedNonceAccount) {
-        return storedNonceAccount;
-    }
-
-    addTransactionMessage('Could not find a nonce account, creating one...');
+    addTransactionMessage(`Create nonce account. The nonce account SOL rent fee you
+        have to pay for this transaction will be reclaimed when you execute the webhook.
+        BYOB adds instructions so close the nonce acount again.
+        Note that BYOB does not re-use nonce accounts because it would be impossible to have 
+        multiple webhooks open simultaneously.
+    `);
 
     try {
-        const { tx: nonceCreateTx, nonceAccount } = await createNonceAccount(connection, wallet);
+        const { tx: nonceCreateTx, nonceAccount } = await createNonceAccount(connection, wallet, addTransactionMessage);
 
-        addTransactionMessage(`Nonce account created. You can find the nonce account public key behind the manage LUT
-        button. BYOB saves the nonce account locally, but it is good to save the nonce account somewhere so if
-        the browser data is cleared you can re-import it.
-    `);
-        localStorage.setItem('nonceAccount', nonceAccount.publicKey.toString());
-        localStorage.setItem('nonceAccountSecret', nonceAccount.secretKey.toString());
-
+        addTransactionMessage(`Nonce account created.`);
         return nonceAccount.publicKey.toString();
     } catch (e) {
         console.log(e)
@@ -70,7 +65,6 @@ export const getNonceAccount = async (connection: Connection, wallet: Wallet, ad
     if (!nonceAccountKey) {
         return undefined;
     }
-
     const nonceAccount = await connection.getAccountInfo(new PublicKey(nonceAccountKey));
     if (!nonceAccount) {
         return undefined;
