@@ -11,7 +11,7 @@ type Props = {
     shareLink?: string;
 }
 
-export default function ExecTransactionModal(props: Props) {
+const CopyableLink = (props: { url: string }) => {
     const copiedRef = useRef<HTMLDivElement>(null)
     const copyToClipboard = (text?: string) => {
         if (!text) {
@@ -28,6 +28,30 @@ export default function ExecTransactionModal(props: Props) {
             }, 1000)
         }
     }
+
+    return (
+        <div className="relative mt-1 rounded-md shadow-sm">
+            <input
+                type="text"
+                name="account-number"
+                id="account-number"
+                className="block w-full rounded-md border-gray-300 bg-gray-100 pr-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                value={props.url}
+                disabled
+            />
+            <div className="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3">
+                <ClipboardDocumentIcon onClick={() => copyToClipboard(props.url)} className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            </div>
+            <div ref={copiedRef} className="absolute opacity-0 -right-5 z-20 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700">
+                Copied!
+                <div className="tooltip-arrow" data-popper-arrow></div>
+            </div>
+        </div>
+    );
+}
+
+export default function ExecTransactionModal(props: Props) {
+    
 
     return (
         <Transition.Root show={props.open} as={Fragment}>
@@ -84,36 +108,14 @@ export default function ExecTransactionModal(props: Props) {
                                         {props.webhookUrl && <div className="mt-2">
                                             <div className="text-sm text-gray-500 font-mono">
                                                 Transaction signed! Here is your webhook url
-                                                <div className="relative mt-1 rounded-md shadow-sm">
-                                                    <input
-                                                        type="text"
-                                                        name="account-number"
-                                                        id="account-number"
-                                                        className="block w-full rounded-md border-gray-300 bg-gray-100 pr-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                                        value={props.webhookUrl}
-                                                        disabled
-                                                    />
-                                                    <div className="cursor-pointer absolute inset-y-0 right-0 flex items-center pr-3">
-                                                        <ClipboardDocumentIcon onClick={() => copyToClipboard(props.webhookUrl)} className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                                                    </div>
-                                                    <div ref={copiedRef} className="absolute opacity-0 -right-5 z-20 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm dark:bg-gray-700">
-                                                        Copied!
-                                                        <div className="tooltip-arrow" data-popper-arrow></div>
-                                                    </div>
-                                                </div>
+                                                <CopyableLink url={props.webhookUrl} />
                                             </div>
                                         </div>}
                                         {props.shareLink && <div className="mt-2">
-                                            <p className="text-sm text-gray-500 font-mono">
-                                                <a
-                                                    href={props.shareLink}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="underline font-semibold"
-                                                >
-                                                    Share link
-                                                </a>
-                                            </p>
+                                            <div className="text-sm text-gray-500 font-mono">
+                                                Transaction signed! Here is your webhook url
+                                                <CopyableLink url={props.shareLink} />
+                                            </div>
                                         </div>}
                                     </div>
                                 </div>

@@ -42,7 +42,7 @@ const createNonceAccount = async (connection: Connection, wallet: Wallet, addTra
 const getNonceAccountKey = async (connection: Connection, wallet: Wallet, addTransactionMessage: (message: string) => void) => {
     addTransactionMessage(`Create nonce account. The nonce account SOL rent fee you
         have to pay for this transaction will be reclaimed when you execute the webhook.
-        BYOB adds instructions so close the nonce acount again.
+        BYOB adds instructions to close the nonce acount again.
         Note that BYOB does not re-use nonce accounts because it would be impossible to have 
         multiple webhooks open simultaneously.
     `);
