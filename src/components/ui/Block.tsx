@@ -1,15 +1,18 @@
-import create from 'zustand';
+import create, { StoreApi } from 'zustand';
 import React, { useMemo } from 'react';
 import { Action, ActionType, BaseState, InitializedAction } from '../../actions/types';
 import MintInput from './MintInput';
 import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DropdownInput from './DropdownInput';
 import { Token } from '../../helpers/token';
+import { NumberInput } from './NumberInput';
 
 type Props = {
     initializedAction: InitializedAction;
     order: number;
     totalActions: number;
+    
+    previousStates: StoreApi<any>[];
 
     onRemove: (index: number) => void;
     onSwap: (from: number, to: number) => void;
@@ -59,20 +62,17 @@ const Block: React.FC<Props> = (props) => {
                 </div>
                 <div className="mt-5 md:col-span-2 md:mt-0">
                     <div className="grid grid-cols-6 gap-6">
-                        {props.initializedAction.inputs.map((input) => (
+                        {props.initializedAction.inputs.map((input, i) => (
                             <div key={input.name} className="col-span-6 sm:col-span-3">
                                 <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
                                     {input.name}
                                 </label>
                                 {input.type === ActionType.NUMBER && (
-                                    <input
-                                        type="number"
-                                        onChange={(e) => input.set(parseFloat(e.target.value))}
-                                        name={input.name}
-                                        min="0"
-                                        id={input.name}
-                                        defaultValue={input.defaultValue() as string}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    <NumberInput
+                                        input={input}
+                                        boundTo={props.initializedAction?.boundedInputs?.[i]}
+                                        inputIterator={i}
+                                        previousStates={props.previousStates}
                                     />
                                 )}
                                 {input.type === ActionType.STRING && (

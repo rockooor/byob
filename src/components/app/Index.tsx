@@ -79,16 +79,16 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
         })
             .then(x => x.json())
             .then(async ({ transaction }) => {
-                const actionsToImport = JSON.parse(transaction.data)
+                const workflow = JSON.parse(transaction.data)
                 // Loop over actions, initialize them and set the state
-                return Promise.all(actionsToImport.map(async actionToImport => {
+                return Promise.all(workflow.map(async actionToImport => {
                     // Find action
                     const [protocol, name] = actionToImport.uid.split('-')
                     const currentAction = allActions[protocol][name]()
                     
                     const initializedAction = await initialize(connection, anchorWallet, currentAction)
                     await initializedAction.state.setState(actionToImport.state)
-                    return { ...initializedAction, uid: `${protocol}-${name}` }
+                    return { ...initializedAction, boundedInputs: actionToImport.boundedInputs, uid: `${protocol}-${name}` }
                 }))
             })
             .then(setActions)
@@ -100,6 +100,10 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
             <Loading />
         )
     }
+
+    const allStates = actions.map((action) => {
+        return action.state;
+    });
 
     return (
         <>
@@ -124,6 +128,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                 {actions.map((action, i) => (
                     <Block
                         key={action.id}
+                        previousStates={allStates.slice(0, i)}
                         initializedAction={action}
                         order={i}
                         totalActions={actions.length}

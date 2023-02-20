@@ -314,7 +314,7 @@ export const shareTransaction = async (
     resetTransactionMessages()
     setTransactionModalOpen(true)
     addTransactionMessage("Creating share link")
-    const serializedTransaction = actions.map(action => {
+    const serializedTransaction = actions.map((action) => {
         const state = {
             ...action.state.getState(),
             outputs: undefined,
@@ -323,6 +323,7 @@ export const shareTransaction = async (
         return {
             state,
             uid: action.uid,
+            boundedInputs: action.inputs.map(action => action.boundTo)
         }
     });
 

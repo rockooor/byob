@@ -57,7 +57,7 @@ export const flashLoanAction = (): Action => {
 
             state.subscribe((newState, prevState) => {
                 // Update output amount
-                if (newState.amount !== prevState.amount) {
+                if (newState.amount !== prevState.amount && newState.amount) {
                     state.setState({
                         outputs: [{
                             name: 'Amount borrowed',

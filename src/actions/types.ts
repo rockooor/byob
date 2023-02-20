@@ -17,12 +17,13 @@ export enum ActionType {
     CHECK
 }
 
-type ActionInput = {
+export type ActionInput = {
     set: (x: any) => void;
     defaultValue: () => Token | number | string | boolean | undefined;
     name: string;
     type: ActionType;
     values?: { name: string; value: string }[] | string; // string means it's a state thing
+    boundTo?: string
 };
 
 type CreateAtaInstruction = {
@@ -54,6 +55,7 @@ export interface Action {
         inputs: ActionInput[];
         createTx: () => Promise<CreateTxOutput>;
         state: typeof this.state;
+        boundedInputs?: (string | undefined)[]
     }>;
 }
 
