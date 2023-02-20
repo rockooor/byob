@@ -61,11 +61,15 @@ export const psmMint = (): Action => {
             const program = new Program(IDL, TOKENS.hedgeProgramAccount, provider);
             await setAccountInfo(program, state)
 
-            state.setState({
-                outputs: [{
-                    name: `Amount USH minted (${state.getState().mintFee * 100}% fee)`,
-                    value: 0,
-                }]
+            state.subscribe((newState, prevState) => {
+                if (newState.amountToMint !== prevState.amountToMint) {
+                    state.setState({
+                        outputs: [{
+                            name: `Amount USH minted (${newState.mintFee * 100}% fee)`,
+                            value: newState.amountToMint / 10 ** USDC_DECIMALS,
+                        }]
+                    })
+                }
             })
 
             return {
@@ -81,7 +85,7 @@ export const psmMint = (): Action => {
                                     }
                                 ]
                             }),
-                        defaultValue: () => state.getState().amountToMint,
+                        defaultValue: () => state.getState().amountToMint / 10 ** USDC_DECIMALS,
                         name: 'Amount of USDC to use for mint',
                         type: ActionType.NUMBER
                     }

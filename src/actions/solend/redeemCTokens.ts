@@ -77,6 +77,26 @@ const redeemTx = async (connection: Connection, anchorWallet: AnchorWallet, stat
     }
 };
 
+const updateOutput = async (connection: Connection, state: StoreApi<State>) => {
+    // Update amount to redeem
+    const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
+    const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
+    if (!reserve) return
+    if (!reserve.stats) {
+        await reserve.load()
+    }
+    const reserveStats = reserve.stats;
+    if (!reserveStats) return
+    state.setState((state) => ({
+        outputs: [
+            {
+                name: state.outputs[0].name,
+                value: state.amountToDeposit * 10 ** reserveStats.decimals * reserveStats.cTokenExchangeRate / (10 ** reserve.config.liquidityToken.decimals)
+            }
+        ]
+    }));
+}
+
 export const redeemCTokens = (): Action => {
     return {
         ...props,
@@ -90,6 +110,12 @@ export const redeemCTokens = (): Action => {
 
                 outputs: [{ name: 'Amount received', value: 0 }]
             }));
+
+            state.subscribe((newState, prevState) => {
+                if (newState.amountToDeposit !== prevState.amountToDeposit) {
+                    updateOutput(connection, state)
+                }
+            })
 
             return {
                 inputs: [
@@ -148,23 +174,7 @@ export const redeemCTokens = (): Action => {
                         set: async (amountToDeposit: number) => {
                             state.setState({ amountToDeposit });
 
-                            // Update amount to redeem
-                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
-                            const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
-                            if (!reserve) return
-                            if (!reserve.stats) {
-                                await reserve.load()
-                            }
-                            const reserveStats = reserve.stats;
-                            if (!reserveStats) return
-                            state.setState((state) => ({
-                                outputs: [
-                                    {
-                                        name: state.outputs[0].name,
-                                        value: state.amountToDeposit * 10 ** reserveStats.decimals * reserveStats.cTokenExchangeRate / (10 ** reserve.config.liquidityToken.decimals)
-                                    }
-                                ]
-                            }));
+                            updateOutput(connection, state)
                         },
                         defaultValue: () => state.getState().amountToDeposit,
                         name: 'Amount to redeem',

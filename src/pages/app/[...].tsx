@@ -4,6 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Index } from '../../components/app/Index';
 import { PageProps } from 'gatsby';
 import Navbar from '../../components/Navbar';
+import { Library } from '../../components/app/Library';
 
 const App = (props: PageProps) => {
     const wallet = useWallet();
@@ -23,6 +24,7 @@ const App = (props: PageProps) => {
             {wallet.publicKey ? (
                 <Router>
                     <Index path="/app" />
+                    <Library path="/app/library" />
                     <Index path="/app/:hash" />
                 </Router>
             ) : (

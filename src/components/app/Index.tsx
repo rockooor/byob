@@ -14,6 +14,7 @@ import allActions from '../../actions';
 import { Switch } from '@headlessui/react';
 import { classNames } from '../../helpers/class';
 import { VersionedTransaction } from '@solana/web3.js';
+import { Loading } from '../ui/Loading';
 
 export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
@@ -28,6 +29,8 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const [webhookUrl, setWebhookUrl] = useState<string>()
     const [shareLink, setShareLink] = useState<string>()
     const [runWebhook, setRunWebhook] = useState(false)
+
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // If opened, clear all info
@@ -69,6 +72,8 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
             return
         }
 
+        setLoading(true)
+
         fetch(`${process.env.BACKEND_ENDPOINT}/get-link/${props.hash}`, {
             method: 'GET'
         })
@@ -87,7 +92,14 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                 }))
             })
             .then(setActions)
+            .then(() => setLoading(false))
     }, [props.hash])
+
+    if (loading) {
+        return (
+            <Loading />
+        )
+    }
 
     return (
         <>
@@ -97,7 +109,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                         <Heading title="Transaction Builder" />
                     </div>
 
-                    <div className="px-4 py-3 text-right sm:px-6">
+                    <div className="text-right">
                         <button
                             type="button"
                             onClick={() => setLutModalOpen(true)}

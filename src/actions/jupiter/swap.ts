@@ -20,8 +20,7 @@ interface State extends BaseState {
     outputs: NonNullable<BaseState['outputs']>;
 }
 
-export const getBestRoute = async (state: StoreApi<State>) => {
-    const currentState = state.getState();
+export const getBestRoute = async (currentState: State, setState: Function) => {
     if (!currentState.inputToken || !currentState.outputToken || !currentState.inputAmount) {
         return;
     }
@@ -38,7 +37,7 @@ export const getBestRoute = async (state: StoreApi<State>) => {
     ).json();
 
     const bestRoute = data[0];
-    state.setState((state) => ({
+    setState((state) => ({
         outputs: [
             {
                 name: state.outputs[0].name,
@@ -51,7 +50,7 @@ export const getBestRoute = async (state: StoreApi<State>) => {
 };
 
 const getSwapTx = async (connection: Connection, wallet: AnchorWallet, state: StoreApi<State>) => {
-    const bestRoute = await getBestRoute(state);
+    const bestRoute = await getBestRoute(state.getState(), state.setState);
 
     const referralResult = await getATA(
         connection,
@@ -128,7 +127,18 @@ export const swap = (): Action => {
                 ]
             }));
 
-            const debouncedGetBestRoute = debounce(() => getBestRoute(state));
+            state.subscribe((newState, prevState) => {
+                // Call getBestRoute when something changed.
+                // That function deals with undefined stuff etc.
+                if (newState.inputToken !== prevState.inputToken
+                    || newState.outputToken !== prevState.outputToken
+                    || newState.inputAmount !== prevState.inputAmount
+                    || newState.slippageBps !== prevState.slippageBps) {
+                        getBestRoute(newState, state.setState)
+                }
+            })
+
+            const debouncedGetBestRoute = debounce(() => getBestRoute(state.getState(), state.setState));
 
             return {
                 inputs: [

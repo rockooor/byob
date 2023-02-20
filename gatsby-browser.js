@@ -15,13 +15,14 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
+const wallets = [
+  new PhantomWalletAdapter(),
+  new SolflareWalletAdapter(),
+]
+
 export const wrapPageElement = ({ element }) => {
   const endpoint = process.env.RPC_ENDPOINT
-  const wallets = [
-    new PhantomWalletAdapter(),
-    new SolflareWalletAdapter(),
-  ]
-
+  
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>

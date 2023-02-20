@@ -11,6 +11,8 @@ import { setUp } from './utils';
 interface State extends BaseState {
     amount: number;
     pool: string;
+
+    outputs: NonNullable<BaseState['outputs']>;
 }
 
 const props = {
@@ -48,8 +50,22 @@ export const flashLoanAction = (): Action => {
         initialize: async (connection: Connection, anchorWallet: AnchorWallet) => {
             const state = create<State>(() => ({
                 amount: 0,
-                pool: ''
+                pool: '',
+
+                outputs: [],
             }));
+
+            state.subscribe((newState, prevState) => {
+                // Update output amount
+                if (newState.amount !== prevState.amount) {
+                    state.setState({
+                        outputs: [{
+                            name: 'Amount borrowed',
+                            value: newState.amount,
+                        }]
+                    })
+                }
+            })
 
             return {
                 inputs: [

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Link } from '@reach/router'
+import { Link } from 'gatsby'
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -11,14 +11,15 @@ import logo from "../images/logo.png";
 
 export default function Navbar(props: { uri: string }) {
     const navigation = [
-        { name: 'TX Builder', href: '#', current: props.uri === '/app' },
+        { name: 'Workflow Builder', href: '/app', current: props.uri === '/app' },
+        { name: 'Library', href: '/app/library', current: props.uri === '/app/library' },
         { name: 'Docs', href: 'https://byob.gitbook.io/docs/', current: props.uri === '/app' },
     ];
 
     return (
         <>
             <div className="min-h-full">
-                <Disclosure as="nav" className="bg-gray-800">
+                <Disclosure as="nav" className="bg-gray-800 mb-3">
                     {({ open }) => (
                         <>
                             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -33,22 +34,41 @@ export default function Navbar(props: { uri: string }) {
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
-                                                {navigation.map((item) => (
-                                                    <a
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        target={item.href.includes('https') ? '_blank' : undefined}
-                                                        className={classNames(
-                                                            item.current
-                                                                ? 'bg-gray-900 text-white'
-                                                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                                            'px-3 py-2 rounded-md text-sm font-medium'
-                                                        )}
-                                                        aria-current={item.current ? 'page' : undefined}
-                                                    >
-                                                        {item.name}
-                                                    </a>
-                                                ))}
+                                                {navigation.map((item) => 
+                                                    item.href.startsWith('http')
+                                                    ?  (
+                                                        <a
+                                                            key={item.name}
+                                                            href={item.href}
+                                                            target={item.href.includes('https') ? '_blank' : undefined}
+                                                            className={classNames(
+                                                                item.current
+                                                                    ? 'bg-gray-900 text-white'
+                                                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                                'px-3 py-2 rounded-md text-sm font-medium'
+                                                            )}
+                                                            aria-current={item.current ? 'page' : undefined}
+                                                        >
+                                                            {item.name}
+                                                        </a>
+                                                    )
+                                                    : (
+                                                        <Link
+                                                            key={item.name}
+                                                            to={item.href}
+                                                            target={item.href.includes('https') ? '_blank' : undefined}
+                                                            className={classNames(
+                                                                item.current
+                                                                    ? 'bg-gray-900 text-white'
+                                                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                                'px-3 py-2 rounded-md text-sm font-medium'
+                                                            )}
+                                                            aria-current={item.current ? 'page' : undefined}
+                                                        >
+                                                            {item.name}
+                                                        </Link>
+                                                    )
+                                                )}
                                             </div>
                                         </div>
                                     </div>

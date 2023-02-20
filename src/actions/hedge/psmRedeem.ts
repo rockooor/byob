@@ -61,11 +61,15 @@ export const psmRedeem = (): Action => {
 
             await setAccountInfo(program, state)
 
-            state.setState({
-                outputs: [{
-                    name: `Amount USDC redeemed (${state.getState().redeemFee * 100}% fee)`,
-                    value: 0,
-                }]
+            state.subscribe((newState, prevState) => {
+                if (newState.amountToRedeem !== prevState.amountToRedeem) {
+                    state.setState({
+                        outputs: [{
+                            name: `Amount USH redeemed (${newState.redeemFee * 100}% fee)`,
+                            value: newState.amountToRedeem / 10 ** USH_DECIMALS,
+                        }]
+                    })
+                }
             })
 
             return {
@@ -81,7 +85,7 @@ export const psmRedeem = (): Action => {
                                     }
                                 ]
                             }),
-                        defaultValue: () => state.getState().amountToRedeem,
+                        defaultValue: () => state.getState().amountToRedeem / 10 ** USH_DECIMALS,
                         name: 'Amount of USH to use for redeeming',
                         type: ActionType.NUMBER
                     }

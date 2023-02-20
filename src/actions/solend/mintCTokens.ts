@@ -1,4 +1,4 @@
-import create from 'zustand/vanilla';
+import create, { StoreApi } from 'zustand/vanilla';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Action, ActionType, BaseState } from '../types';
@@ -79,6 +79,26 @@ const mintTx = async (connection: Connection, anchorWallet: AnchorWallet, state:
     }
 };
 
+const updateOutput = async (connection: Connection, state: StoreApi<State>) => {
+    // Update amount to deposit
+    const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
+    const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
+    if (!reserve) return
+    if (!reserve.stats) {
+        await reserve.load()
+    }
+    const reserveStats = reserve.stats;
+    if (!reserveStats) return
+    state.setState((state) => ({
+        outputs: [
+            {
+                name: state.outputs[0].name,
+                value: state.amountToDeposit * 10 ** reserve.config.liquidityToken.decimals / (reserveStats.cTokenExchangeRate * (10 ** reserveStats.decimals))
+            }
+        ]
+    }));
+}
+
 export const mintCTokens = (): Action => {
     return {
         ...props,
@@ -92,6 +112,12 @@ export const mintCTokens = (): Action => {
 
                 outputs: [{ name: 'Amount received', value: 0 }]
             }));
+
+            state.subscribe((newState, prevState) => {
+                if (newState.amountToDeposit !== prevState.amountToDeposit) {
+                    updateOutput(connection, state)
+                }
+            })
 
             return {
                 inputs: [
@@ -150,23 +176,7 @@ export const mintCTokens = (): Action => {
                         set: async (amountToDeposit: number) => {
                             state.setState({ amountToDeposit });
 
-                            // Update amount to deposit
-                            const market = cache._market || await SolendMarket.initialize(connection, 'production', state.getState().market);
-                            const reserve = cache._reserve || market.reserves.find((__reserve) => __reserve.config.liquidityToken.mint === state.getState().reserve);
-                            if (!reserve) return
-                            if (!reserve.stats) {
-                                await reserve.load()
-                            }
-                            const reserveStats = reserve.stats;
-                            if (!reserveStats) return
-                            state.setState((state) => ({
-                                outputs: [
-                                    {
-                                        name: state.outputs[0].name,
-                                        value: state.amountToDeposit * 10 ** reserve.config.liquidityToken.decimals / (reserveStats.cTokenExchangeRate * (10 ** reserveStats.decimals))
-                                    }
-                                ]
-                            }));
+                            updateOutput(connection, state)
                         },
                         defaultValue: () => state.getState().amountToDeposit,
                         name: 'Amount to deposit',
