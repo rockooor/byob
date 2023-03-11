@@ -19,18 +19,20 @@ export default function Navbar(props: { uri: string }) {
     return (
         <>
             <div className="min-h-full">
-                <Disclosure as="nav" className="bg-gray-800 mb-3">
+                <Disclosure as="nav" className="border-b border-indigo-900 mb-3">
                     {({ open }) => (
                         <>
                             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                                 <div className="flex h-16 items-center justify-between">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <img
-                                                className="h-8 w-8"
-                                                src={logo}
-                                                alt="Your Company"
-                                            />
+                                            <Link to="/">
+                                                <img
+                                                    className="h-8 w-8"
+                                                    src={logo}
+                                                    alt="Your Company"
+                                                />
+                                            </Link>
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
@@ -42,9 +44,10 @@ export default function Navbar(props: { uri: string }) {
                                                             href={item.href}
                                                             target={item.href.includes('https') ? '_blank' : undefined}
                                                             className={classNames(
+                                                                'border border-transparent',
                                                                 item.current
-                                                                    ? 'bg-gray-900 text-white'
-                                                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                                    ? 'bg-gradient-to-r border border-indigo-600 from-indigo-800 via-indigo-600 to-indigo-800 text-slate-200'
+                                                                    : 'text-gray-300 box-border hover:border hover:border-indigo-600 hover:bg-gradient-to-r hover:from-indigo-800 hover:via-indigo-600 hover:to-indigo-800 hover:text-slate-200',
                                                                 'px-3 py-2 rounded-md text-sm font-medium'
                                                             )}
                                                             aria-current={item.current ? 'page' : undefined}
@@ -58,9 +61,10 @@ export default function Navbar(props: { uri: string }) {
                                                             to={item.href}
                                                             target={item.href.includes('https') ? '_blank' : undefined}
                                                             className={classNames(
+                                                                'border border-transparent',
                                                                 item.current
-                                                                    ? 'bg-gray-900 text-white'
-                                                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                                    ? 'bg-gradient-to-r border border-indigo-600 from-indigo-800 via-indigo-600 to-indigo-800 text-slate-200'
+                                                                    : 'text-gray-300 box-border hover:border hover:border-indigo-600 hover:bg-gradient-to-r hover:from-indigo-800 hover:via-indigo-600 hover:to-indigo-800 hover:text-slate-200',
                                                                 'px-3 py-2 rounded-md text-sm font-medium'
                                                             )}
                                                             aria-current={item.current ? 'page' : undefined}
@@ -74,7 +78,7 @@ export default function Navbar(props: { uri: string }) {
                                     </div>
                                     <div className="hidden md:block">
                                         <div className="ml-4 flex items-center md:ml-6">
-                                            <WalletMultiButton />
+                                            <WalletMultiButton className="bg-slate-800" />
                                         </div>
                                     </div>
                                     <div className="-mr-2 flex md:hidden">

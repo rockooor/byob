@@ -26,7 +26,7 @@ export const NumberInput = (props: { input: ActionInput; inputIterator: number; 
                 min="0"
                 id={props.input.name}
                 defaultValue={props.input.defaultValue() as number}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-md border-slate-700 bg-slate-800 text-slate-200 shadow-sm "
             />
         )
     }
@@ -42,14 +42,14 @@ export const NumberInput = (props: { input: ActionInput; inputIterator: number; 
                         min="0"
                         id={props.input.name}
                         defaultValue={props.input.defaultValue() as number}
-                        className="block w-full rounded-none rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="block w-full rounded-none rounded-l-md border-slate-700 bg-slate-800 text-slate-200 "
                     /></div>
                 <button
                     type="button"
                     onClick={() => {
                         setValue(`${props.previousStates.length - 1}.0`)
                     }}
-                    className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-700 bg-slate-800 text-slate-200 px-4 py-1.5 text-sm font-medium  hover:bg-slate-700"
                 >
                     <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </button>
@@ -84,7 +84,7 @@ export const NumberInput = (props: { input: ActionInput; inputIterator: number; 
                     <input
                         type="number"
                         disabled
-                        className="block w-full rounded-none rounded-l-md border-gray-300 bg-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        className="block w-full rounded-none rounded-l-md border-slate-700 bg-slate-800 text-slate-600 "
                         value={boundValue}
                     />
                 </div>
@@ -96,7 +96,7 @@ export const NumberInput = (props: { input: ActionInput; inputIterator: number; 
                         unsubscribe.current!()
                         props.input.boundTo = undefined
                     }}
-                    className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-700 bg-slate-800 text-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-700 "
                 >
                     <XMarkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                 </button>

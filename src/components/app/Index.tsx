@@ -15,6 +15,7 @@ import { Switch } from '@headlessui/react';
 import { classNames } from '../../helpers/class';
 import { VersionedTransaction } from '@solana/web3.js';
 import { Loading } from '../ui/Loading';
+import { Button } from '../ui/Button';
 
 export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
@@ -114,13 +115,13 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                     </div>
 
                     <div className="text-right">
-                        <button
+                        <Button
+                            inset
                             type="button"
                             onClick={() => setLutModalOpen(true)}
-                            className="inline-flex justify-center rounded-md border border-transparent border-indigo-600 py-2 px-4 text-sm font-medium text-gray-900 shadow-sm hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
                             Manage LUTs
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 
@@ -139,10 +140,10 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
 
                 <NewActionButton onAddAction={onAddAction} />
 
-                <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
+                <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
                     <Switch.Group as="div" className="flex items-center justify-end mb-3">
                         <Switch.Label as="span" className="mr-3">
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-slate-400">
                                 {runWebhook ? 'Sign and run later (create a webhook)' : 'Sign and run immediately'}
                             </span>
                         </Switch.Label>
@@ -164,30 +165,31 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                         </Switch>
                     </Switch.Group>
 
-                    <button
+                    <Button
                         type="button"
+                        inset
+                        className="mr-2"
                         onClick={() => shareTransaction(actions, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setShareLink)}
-                        className="inline-flex mr-3 justify-center rounded-md border border-indigo-600 bg-transparent py-2 px-4 text-sm font-medium text-black shadow-sm hover:bg-indigo-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Share
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         type="button"
                         onClick={() => executeTransaction(connection, wallet, signTransaction, actions, runWebhook, setErrorLogs, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setSentTxId, setWebhookUrl)}
-                        className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        
                     >
                         Run
-                    </button>
+                    </Button>
                 </div>
 
-                {errorsLogs.length > 0 && <div className="w-full overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg my-6">
-                    <table className="min-w-full divide-y divide-gray-300">
-                        <thead className="bg-gray-800">
+                {errorsLogs.length > 0 && <div className="w-full overflow-hidden md:rounded-lg border-slate-700 border my-6">
+                    <table className="min-w-full divide-y divide-slate-700">
+                        <thead className="bg-slate-800">
                             <tr>
                                 <th
                                     scope="col"
-                                    className="whitespace-nowrap text-left font-mono py-2 pl-4 pr-3  text-gray-200 sm:pl-6 text-lg"
+                                    className="whitespace-nowrap text-left font-mono py-2 pl-4 pr-3  text-slate-200 sm:pl-6 text-lg"
                                 >
                                     Something went wrong. Error log:
                                 </th>
@@ -195,8 +197,8 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                         </thead>
                         <tbody className="bg-white">
                             {errorsLogs.map((log, i) => (
-                                <tr key={i} className={i % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
-                                    <td className="whitespace-nowrap font-mono py-2 pl-4 pr-3 text-sm text-gray-200 sm:pl-6">
+                                <tr key={i} className={i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-800'}>
+                                    <td className="whitespace-nowrap font-mono py-2 pl-4 pr-3 text-sm text-slate-200 sm:pl-6 border-b border-slate-700">
                                         {log}
                                     </td>
                                 </tr>

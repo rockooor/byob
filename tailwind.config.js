@@ -5,7 +5,11 @@ module.exports = {
     "./src/components/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        vt323: 'vt323'
+      }
+    },
   },
   plugins: [
     require('@tailwindcss/forms')

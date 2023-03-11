@@ -46,11 +46,11 @@ const MintInput = (props: Props) => {
             >
                 <div className="relative">
                     <MagnifyingGlassIcon
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
+                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-slate-200"
                         aria-hidden="true"
                     />
                     <Combobox.Input
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-slate-200 placeholder-gray-400 focus:ring-0 sm:text-sm"
                         placeholder="Search token..."
                         onChange={(event) => setQuery(event.target.value)}
                     />
@@ -59,7 +59,7 @@ const MintInput = (props: Props) => {
                 {filteredTokens.length > 0 && (
                     <Combobox.Options
                         static
-                        className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800"
+                        className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-slate-200"
                     >
                         {filteredTokens.map((token) => (
                             <Combobox.Option
@@ -68,7 +68,7 @@ const MintInput = (props: Props) => {
                                 className={({ active }) =>
                                     classNames(
                                         'flex cursor-default select-none rounded-xl p-3',
-                                        active && 'bg-gray-100'
+                                        active && 'bg-slate-700'
                                     )
                                 }
                             >
@@ -85,7 +85,7 @@ const MintInput = (props: Props) => {
                                             <p
                                                 className={classNames(
                                                     'text-sm font-medium',
-                                                    active ? 'text-gray-900' : 'text-gray-700'
+                                                    active ? 'text-slate-200' : 'text-slate-400'
                                                 )}
                                             >
                                                 {token.symbol}
@@ -93,7 +93,7 @@ const MintInput = (props: Props) => {
                                             <p
                                                 className={classNames(
                                                     'text-sm',
-                                                    active ? 'text-gray-700' : 'text-gray-500'
+                                                    active ? 'text-slate-400' : 'text-slate-500'
                                                 )}
                                             >
                                                 {token.name}
@@ -107,13 +107,13 @@ const MintInput = (props: Props) => {
                 )}
 
                 {query !== '' && query.length > 2 && filteredTokens.length === 0 && (
-                    <p className="p-4 text-sm text-gray-500">No tokens found.</p>
+                    <p className="p-4 text-sm text-slate-500">No tokens found.</p>
                 )}
             </Combobox>
         );
     } else {
         return (
-            <div className="bg-gray-100 pr-3 pl-3 pb-2 pt-2 mt-1 rounded-lg w-full flex items-center">
+            <div className="bg-slate-800 border border-slate-700 pr-3 pl-3 pb-2 pt-2 mt-1 rounded-lg w-full flex items-center text-slate-200">
                 <img src={selectedToken.logoURI} className="w-6 h-6 inline mr-2" />
                 {selectedToken.symbol}
                 <div className="flex grow justify-end">

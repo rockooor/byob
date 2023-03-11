@@ -6,12 +6,17 @@ import { Link } from 'gatsby';
 
 // @ts-ignore
 import logo from "../images/logo.png";
+import { Button } from '../components/ui/Button';
+import Security from '../components/home/Security';
+import BotAccounts from '../components/home/BotAccounts';
+import WorkflowBuilder from '../components/home/WorkflowBuilder';
+import VisitCTA from '../components/home/VisitCTA';
 
 export default function Index() {
     return (
         <div className="relative overflow-hidden">
             <Popover as="header" className="relative">
-                <div className="bg-gray-900 pt-6">
+                <div className="pt-6">
                     <nav
                         className="relative mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6"
                         aria-label="Global"
@@ -25,71 +30,23 @@ export default function Index() {
                                         alt=""
                                     />
                                 </a>
-                                <div className="-mr-2 flex items-center md:hidden">
-                                    <Popover.Button className="focus-ring-inset inline-flex items-center justify-center rounded-md bg-gray-900 p-2 text-gray-400 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
-                                        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-                                    </Popover.Button>
-                                </div>
                             </div>
                             <div className="hidden space-x-8 md:ml-10 md:flex">
                             </div>
                         </div>
-                        <div className="hidden md:flex md:items-center md:space-x-6">
+                        <div className="flex md:items-center md:space-x-6">
                             <Link
                                 to="/app"
-                                className="inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-base font-medium text-white hover:bg-gray-700"
                             >
-                                App
+                                <Button type="button">App</Button>
                             </Link>
                         </div>
                     </nav>
                 </div>
-
-                <Transition
-                    as={Fragment}
-                    enter="duration-150 ease-out"
-                    enterFrom="opacity-0 scale-95"
-                    enterTo="opacity-100 scale-100"
-                    leave="duration-100 ease-in"
-                    leaveFrom="opacity-100 scale-100"
-                    leaveTo="opacity-0 scale-95"
-                >
-                    <Popover.Panel
-                        focus
-                        className="absolute inset-x-0 top-0 z-10 origin-top transform p-2 transition md:hidden"
-                    >
-                        <div className="overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-black ring-opacity-5">
-                            <div className="flex items-center justify-between px-5 pt-4">
-                                <div>
-                                    <img
-                                        className="h-8 w-auto"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="-mr-2">
-                                    <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-600">
-                                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                                    </Popover.Button>
-                                </div>
-                            </div>
-                            <div className="pt-5 pb-6">
-                                <div className="space-y-1 px-2">
-                                    <Link
-                                        to="/app"
-                                        className="inline-flex items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-base font-medium text-white hover:bg-gray-700"
-                                    >
-                                        App
-                                </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </Popover.Panel>
-                </Transition>
             </Popover>
 
-            <main className="h-full min-h-screen bg-gray-900">
-                <div className="bg-gray-900 pt-10 sm:pt-16 lg:overflow-hidden lg:pt-8 lg:pb-14">
+            <main className="h-full min-h-screen">
+                <div className="pt-10 sm:pt-16 lg:overflow-hidden lg:pt-8 lg:pb-6">
                     <div className="mx-auto max-w-7xl lg:px-8">
                         <div className="lg:grid lg:grid-cols-2 lg:gap-8">
                             <div className="mx-auto max-w-md px-4 sm:max-w-2xl sm:px-6 sm:text-center lg:flex lg:items-center lg:px-0 lg:text-left">
@@ -99,28 +56,26 @@ export default function Index() {
                                         <span className="block text-indigo-400">Build your own bot</span>
                                     </h1>
                                     <p className="mt-3 mb-6 text-base text-gray-300 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                                        Create atomic transactions on Solana using a user friendly interface.
+                                        Create complex workflows using our no-code interface. Interact with flash loans, create collateral swaps, limit orders,
+                                        stop losses or even self-custodial insurance. It's all possible with BYOB!
                                     </p>
 
                                     <Link
                                         to="/app"
-                                        className="inline-flex mr-4 justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
-                                        App
+                                        <Button>App</Button>
                                     </Link>
                                     <a
                                         href="https://byob.gitbook.io/docs"
                                         target="_blank"
-                                        className="inline-flex mr-4 justify-center rounded-md border border-transparent border-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
-                                        Gitbook
+                                        <Button inset className="ml-2">Gitbook</Button>
                                     </a>
                                     <a
                                         href="https://github.com/rockooor/byob"
                                         target="_blank"
-                                        className="inline-flex justify-center rounded-md border border-transparent border-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
-                                        Github
+                                        <Button inset className="ml-2">Github</Button>
                                     </a>
                                 </div>
                             </div>
@@ -138,7 +93,10 @@ export default function Index() {
                     </div>
                 </div>
 
-                {/* More main page content here... */}
+                <WorkflowBuilder />
+                <Security />
+                <BotAccounts />
+                <VisitCTA />
             </main>
         </div>
     );

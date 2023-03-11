@@ -38,10 +38,10 @@ const NewActionButton = (props: Props) => {
             <button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="relative block w-full my-3 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="relative block w-full my-3 rounded-lg border-2 border-dashed border-indigo-200 p-12 text-center hover:border-indigo-500 hover:bg-gradient-to-b hover:from-slate-800 hover:to-slate-900"
             >
-                <DocumentPlusIcon className="mx-auto h-16 w-16 text-gray-400" />
-                <span className="mt-2 block text-sm font-medium text-gray-900">Add action</span>
+                <DocumentPlusIcon className="mx-auto h-16 w-16 text-indigo-400" />
+                <span className="mt-2 block text-sm font-medium text-indigo-200">Add action</span>
             </button>
 
             <Transition.Root show={open} as={Fragment} afterLeave={() => setQuery('')} appear>
@@ -68,7 +68,7 @@ const NewActionButton = (props: Props) => {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+                            <Dialog.Panel className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-slate-900 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                                 <Combobox
                                     onChange={(item: ActionWithUid) => {
                                         props.onAddAction(item);
@@ -77,11 +77,11 @@ const NewActionButton = (props: Props) => {
                                 >
                                     <div className="relative">
                                         <MagnifyingGlassIcon
-                                            className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
+                                            className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-slate-200"
                                             aria-hidden="true"
                                         />
                                         <Combobox.Input
-                                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
+                                            className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-slate-200 placeholder-slate-400 focus:ring-0 sm:text-sm"
                                             placeholder="Search..."
                                             onChange={(event) => setQuery(event.target.value)}
                                         />
@@ -94,10 +94,10 @@ const NewActionButton = (props: Props) => {
                                         >
                                             {Object.entries(groups).map(([category, items]) => (
                                                 <li key={category}>
-                                                    <h2 className="bg-gray-100 py-2.5 px-4 text-xs font-semibold text-gray-900">
+                                                    <h2 className="bg-slate-800 py-2.5 px-4 text-xs font-semibold text-slate-200">
                                                         {category}
                                                     </h2>
-                                                    <ul className="mt-2 text-sm text-gray-800">
+                                                    <ul className="mt-2 text-sm text-slate-200">
                                                         {items.map((item) => (
                                                             <Combobox.Option
                                                                 key={`${item.protocol.name}${item.name}`}
@@ -105,7 +105,7 @@ const NewActionButton = (props: Props) => {
                                                                 className={({ active }) =>
                                                                     classNames(
                                                                         'cursor-default select-none px-4 py-2',
-                                                                        active && 'bg-indigo-600 text-white'
+                                                                        active && 'bg-indigo-900 text-slate-200'
                                                                     )
                                                                 }
                                                             >

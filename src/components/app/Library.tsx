@@ -27,7 +27,7 @@ export const Library = (props: RouteComponentProps) => {
                 setActions(featured.workflows)
                 setLoading(false)
             })
-    })
+    }, [])
 
     if (loading) {
         return (
@@ -47,23 +47,23 @@ export const Library = (props: RouteComponentProps) => {
                     {actions.map((action) => (
                         <li
                             key={action.hash}
-                            className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow"
+                            className="col-span-1 flex flex-col divide-y divide-slate-800 rounded-lg bg-gradient-to-b from-slate-800 to-slate-900 text-center border border-slate-900"
                         >
                             <div className="flex flex-1 flex-col p-8">
-                                <h3 className="mt-6 text-lg font-medium text-gray-900">{action.name}</h3>
+                                <h3 className="mt-6 text-lg font-medium text-slate-200">{action.name}</h3>
                                 <dl className="mt-1 flex flex-grow flex-col justify-between">
-                                    <dd className="text-sm text-gray-500">{action.description}</dd>
+                                    <dd className="text-sm text-slate-300">{action.description}</dd>
                                 </dl>
-                                {action.creator && <p className="text-gray-400 text-xs mt-6">Created by {action.creator}</p>}
+                                {action.creator && <p className="text-slate-400 text-xs mt-6">Created by {action.creator}</p>}
                             </div>
                             <div>
-                                <div className="-mt-px flex divide-x divide-gray-200">
+                                <div className="-mt-px flex divide-x divide-indigo-200">
                                     <div className="flex w-0 flex-1">
                                         <Link
                                             to={`/app/${action.hash}`}
-                                            className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
+                                            className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-indigo-200 hover:text-indigo-500"
                                         >
-                                            <PlusCircleIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                                            <PlusCircleIcon className="h-5 w-5 text-indigo-200" aria-hidden="true" />
                                             <span className="ml-3">Import</span>
                                         </Link>
                                     </div>
@@ -77,11 +77,11 @@ export const Library = (props: RouteComponentProps) => {
                         <button
                             onClick={() => window.open('https://twitter.com/Rockooor')}
                             type="button"
-                            className="relative block h-full w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            className="relative block h-full w-full rounded-lg border-2 border-dashed border-indigo-300 p-12 text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:bg-gradient-to-b hover:from-slate-800 hover:to-slate-900"
                         >
-                            <PlusCircleIcon className="h-12 w-12 mx-auto text-gray-400" aria-hidden="true" />
-                            <span className="mt-2 block text-sm font-medium text-gray-900">Your workflow here?</span>
-                            <span className="mt-2 block text-sm font-sm text-gray-500">Send me a DM on Twitter</span>
+                            <PlusCircleIcon className="h-12 w-12 mx-auto text-indigo-200" aria-hidden="true" />
+                            <span className="mt-2 block text-sm font-medium text-indigo-200">Your workflow here?</span>
+                            <span className="mt-2 block text-sm font-sm text-indigo-500">Send me a DM on Twitter</span>
                         </button>
                     </li>
                 </ul>
