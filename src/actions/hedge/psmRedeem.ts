@@ -56,7 +56,7 @@ export const psmRedeem = (): Action => {
             const state = create<State>(() => ({
                 amountToRedeem: 0,
                 redeemFee: 0,
-                outputs: []
+                outputs: [{ name: '', value: 0 }]
             }));
 
             await setAccountInfo(program, state)
@@ -66,7 +66,7 @@ export const psmRedeem = (): Action => {
                     state.setState({
                         outputs: [{
                             name: `Amount USH redeemed (${newState.redeemFee * 100}% fee)`,
-                            value: newState.amountToRedeem / 10 ** USH_DECIMALS,
+                            value: newState.amountToRedeem * (1 - newState.redeemFee) / 10 ** USH_DECIMALS,
                         }]
                     })
                 }
@@ -78,13 +78,7 @@ export const psmRedeem = (): Action => {
                         set: (amountToRedeem: number) =>
                             state.setState({
                                 amountToRedeem: amountToRedeem * 10 ** USH_DECIMALS,
-                                outputs: [
-                                    {
-                                        name: state.getState().outputs[0].name,
-                                        value: amountToRedeem * (1 - state.getState().redeemFee)
-                                    }
-                                ]
-                            }),
+                            }), 
                         defaultValue: () => state.getState().amountToRedeem / 10 ** USH_DECIMALS,
                         name: 'Amount of USH to use for redeeming',
                         type: ActionType.NUMBER

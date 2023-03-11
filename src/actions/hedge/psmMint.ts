@@ -54,7 +54,7 @@ export const psmMint = (): Action => {
             const state = create<State>(() => ({
                 amountToMint: 0,
                 mintFee: 0,
-                outputs: []
+                outputs: [{ name: '', value: 0 }]
             }));
 
             const provider = new AnchorProvider(connection, anchorWallet, {});
@@ -66,7 +66,7 @@ export const psmMint = (): Action => {
                     state.setState({
                         outputs: [{
                             name: `Amount USH minted (${newState.mintFee * 100}% fee)`,
-                            value: newState.amountToMint / 10 ** USDC_DECIMALS,
+                            value: newState.amountToMint * (1 - newState.mintFee) / 10 ** USDC_DECIMALS,
                         }]
                     })
                 }
@@ -78,12 +78,6 @@ export const psmMint = (): Action => {
                         set: (amountToMint: number) =>
                             state.setState({
                                 amountToMint: amountToMint * 10 ** USDC_DECIMALS,
-                                outputs: [
-                                    {
-                                        name: state.getState().outputs[0].name,
-                                        value: amountToMint * (1 - state.getState().mintFee)
-                                    }
-                                ]
                             }),
                         defaultValue: () => state.getState().amountToMint / 10 ** USDC_DECIMALS,
                         name: 'Amount of USDC to use for mint',
