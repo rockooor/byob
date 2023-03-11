@@ -16,7 +16,7 @@ const tiers = [
     {
         name: 'Self-custodial mode',
         id: 'tier-custodial',
-        description: 'Send limited information to our backend in order to enable advanced features. Interact using any wallet, even hardware wallets. Note that BYOB will not be to do anything you did not explicitely sign.',
+        description: 'Send limited information to our backend in order to enable advanced features. Interact using any wallet, even hardware wallets. Note that BYOB will not be able to do anything you did not explicitely sign.',
         features: [
             'Everything in zero-risk mode',
             'Share workflows',
@@ -29,7 +29,6 @@ const tiers = [
         id: 'tier-bot',
         description: 'Unleash the full feature set of BYOB.',
         features: [
-            'Everything in self-custodial mode',
             'Run workflows in bot mode (bots accounts are secured by your wallet), see more below',
             'Recurring execution (run from every minute to every year)',
             'Execution filter (run only if my arb is profitable)',

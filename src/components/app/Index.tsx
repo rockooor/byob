@@ -31,6 +31,8 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const [shareLink, setShareLink] = useState<string>()
     const [runWebhook, setRunWebhook] = useState(false)
 
+    const [execMode, setExecMode] = useState('wallet')
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -140,48 +142,91 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
 
                 <NewActionButton onAddAction={onAddAction} />
 
-                <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
-                    <Switch.Group as="div" className="flex items-center justify-end mb-3">
-                        <Switch.Label as="span" className="mr-3">
-                            <span className="text-sm font-medium text-slate-400">
-                                {runWebhook ? 'Sign and run later (create a webhook)' : 'Sign and run immediately'}
-                            </span>
-                        </Switch.Label>
-                        <Switch
-                            checked={runWebhook}
-                            onChange={setRunWebhook}
-                            className={classNames(
-                                runWebhook ? 'bg-blue-600' : 'bg-green-600',
-                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-                            )}
-                        >
-                            <span
-                                aria-hidden="true"
-                                className={classNames(
-                                    runWebhook ? 'translate-x-5' : 'translate-x-0',
-                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
-                                )}
-                            />
-                        </Switch>
-                    </Switch.Group>
-
-                    <Button
-                        type="button"
-                        inset
-                        className="mr-2"
-                        onClick={() => shareTransaction(actions, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setShareLink)}
-                    >
-                        Share
-                    </Button>
-
-                    <Button
-                        type="button"
-                        onClick={() => executeTransaction(connection, wallet, signTransaction, actions, runWebhook, setErrorLogs, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setSentTxId, setWebhookUrl)}
-                        
-                    >
-                        Run
-                    </Button>
+                <div>
+                    <div className="block">
+                        <div className="">
+                            <nav className="flex justify-end space-x-8 mr-6" aria-label="Tabs">
+                                <a
+                                    onClick={() => setExecMode('wallet')}
+                                    className={classNames(
+                                        execMode === 'wallet'
+                                            ? '-mb-[1px] border bg-gradient-to-b from-slate-700 to-slate-800 border-slate-700 text-slate-400 rounded-t-lg'
+                                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                                        'cursor-pointer whitespace-nowrap border-b-0 py-4 px-4 text-sm font-medium'
+                                    )}
+                                    aria-current={execMode === 'wallet' ? 'page' : undefined}
+                                >
+                                    Run from wallet
+                                </a>
+                                <a
+                                    onClick={() => setExecMode('bot')}
+                                    className={classNames(
+                                        execMode === 'bot'
+                                            ? '-mb-[1px] border bg-gradient-to-b from-slate-700 to-slate-800 border-slate-700 text-slate-400 rounded-t-lg'
+                                            : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                                        'cursor-pointer whitespace-nowrap border-b-0 py-4 px-4 text-sm font-medium'
+                                    )}
+                                    aria-current={execMode === 'bot' ? 'page' : undefined}
+                                >
+                                    Run using bot
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
+                {execMode === 'wallet' &&  (
+                    <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
+                        <Switch.Group as="div" className="flex items-center justify-end mb-3">
+                            <Switch.Label as="span" className="mr-3">
+                                <span className="text-sm font-medium text-slate-400">
+                                    {runWebhook ? 'Sign and run later (create a webhook)' : 'Sign and run immediately'}
+                                </span>
+                            </Switch.Label>
+                            <Switch
+                                checked={runWebhook}
+                                onChange={setRunWebhook}
+                                className={classNames(
+                                    runWebhook ? 'bg-blue-600' : 'bg-green-600',
+                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                                )}
+                            >
+                                <span
+                                    aria-hidden="true"
+                                    className={classNames(
+                                        runWebhook ? 'translate-x-5' : 'translate-x-0',
+                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                                    )}
+                                />
+                            </Switch>
+                        </Switch.Group>
+
+                        <Button
+                            type="button"
+                            inset
+                            className="mr-2"
+                            onClick={() => shareTransaction(actions, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setShareLink)}
+                        >
+                            Share
+                        </Button>
+
+                        <Button
+                            type="button"
+                            onClick={() => executeTransaction(connection, wallet, signTransaction, actions, runWebhook, setErrorLogs, setTransactionModalOpen, addTransactionMessage, resetTransactionMessages, setSentTxId, setWebhookUrl)}
+                            
+                        >
+                            Run
+                        </Button>
+                    </div>
+                )}
+
+                {execMode === 'bot' && (
+                    <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
+                        Select bot account<br />
+                        Frequency<br />
+                        Filter condition<br />
+                        Create 
+                    </div>
+                )}
 
                 {errorsLogs.length > 0 && <div className="w-full overflow-hidden md:rounded-lg border-slate-700 border my-6">
                     <table className="min-w-full divide-y divide-slate-700">

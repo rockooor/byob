@@ -94,7 +94,7 @@ export const BotAccounts = (props: RouteComponentProps) => {
                         </Button>
                     </div>
                 </div>
-                <p>Manage your bot accounts here. Note that your bot accounts are stored securely with your connected wallet. If for some reason the bots are disappeared from this view you can click on Fetch to retrieve all the bots from your connected wallet again securely.</p>
+                <p>Manage your bot accounts here. Note that they are fully fledged Solana accounts and that your bot accounts are stored securely with your connected wallet. If for some reason the bots are disappeared from this view you can click on Fetch to retrieve all the bots from your connected wallet again securely. Don't forget to fund them, otherwise they can't do anything.</p>
                 {botAccounts?.length! > 0 && <table className="min-w-full divide-y divide-indigo-900">
                     <thead className="">
                         <tr>
