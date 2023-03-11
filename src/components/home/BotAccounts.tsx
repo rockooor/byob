@@ -5,7 +5,7 @@ const features = [
     {
         name: 'Create a bot',
         description:
-            'When you create a new bot, the private key is shared between BYOB and you. You can import it in any wallet, it\'s your account! The funds in this account are not shared with other BYOB users and you can take them out anytime. Furthermore, we rely on Amazon Web Services\' security mechanisms to make sure everything is safe. Additionally, we implemented all normal security practices like SSL, encryption, etc.',
+            'You can create a new bot by signing a message with your wallet. This proves ownership of the bot later. Furthermore, we rely on Amazon Web Services\' security mechanisms to make sure everything is safe. Additionally, we implemented all normal security practices like SSL, encryption, etc.',
         icon: ShieldCheckIcon,
     },
     {
@@ -29,7 +29,7 @@ export default function Example() {
                 <div className="mx-auto max-w-2xl lg:mx-0">
                     <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Bot accounts</h2>
                     <p className="mt-6 text-lg leading-8 text-gray-300">
-                        Bot accounts are the ultimate product of BYOB. Create a complex workflow, like a flash loan arbitrage or a DCA (Dynamic Cost Average) bot. Set it to execute every second or every week and define an execution filter (do not execute when $SOL is below $20). Let it run and auto-profit!
+                        Bot accounts are the ultimate product of BYOB. Create a complex workflow, like a flash loan arbitrage or a DCA (Dynamic Cost Average) bot. Set it to execute every minute or every week and define an execution filter (do not execute when $SOL is below $20). Let it run and auto-profit!
                     </p>
                 </div>
                 <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">

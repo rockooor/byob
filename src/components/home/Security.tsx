@@ -30,10 +30,10 @@ const tiers = [
         description: 'Unleash the full feature set of BYOB.',
         features: [
             'Everything in self-custodial mode',
-            'Run workflows in bot mode (bots share their private key between you and BYOB), see more below',
-            'Recurring execution (run from every second to every year)',
+            'Run workflows in bot mode (bots accounts are secured by your wallet), see more below',
+            'Recurring execution (run from every minute to every year)',
             'Execution filter (run only if my arb is profitable)',
-            '~$0.002 per trigger. Free* if bot owns a BYOB NFT (tba)',
+            '$0.0001 SOL per trigger. Free* if bot owns a BYOB NFT (tba)',
         ],
     },
 ]

@@ -12,6 +12,7 @@ import logo from "../images/logo.png";
 export default function Navbar(props: { uri: string }) {
     const navigation = [
         { name: 'Workflow Builder', href: '/app', current: props.uri === '/app' },
+        { name: 'Bot Accounts', href: '/app/botaccounts', current: props.uri === '/app/botaccounts' },
         { name: 'Library', href: '/app/library', current: props.uri === '/app/library' },
         { name: 'Docs', href: 'https://byob.gitbook.io/docs/', current: props.uri === '/app' },
     ];
