@@ -1,5 +1,6 @@
 import { Link } from 'gatsby'
 import React from 'react'
+import { BsTwitter, BsDiscord } from 'react-icons/bs'
 import { Button } from '../ui/Button'
 
 export default function Example() {
@@ -16,6 +17,16 @@ export default function Example() {
                     <Link to="/app/library" className="mt-6 mx-auto max-w-2xl text-center flex justify-center">
                         <Button>Visit Library</Button>
                     </Link>
+
+
+                    <div className="flex justify-center mt-6">
+                        <a href="http://discord.gg/DC99NepSmx" target="_blank" className="text-slate-200 hover:text-slate-400 text-2xl">
+                            <BsDiscord className="inline" />
+                        </a>
+                        <a href="https://twitter.com/byob_so" target="_blank" className="text-slate-200 hover:text-slate-400 text-2xl">
+                            <BsTwitter className="inline ml-6" />
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

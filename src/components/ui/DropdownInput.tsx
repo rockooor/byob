@@ -8,6 +8,7 @@ type Props = {
     set: (x: any) => void;
     values: { name: string; value: string }[];
     defaultValue: string | boolean | undefined | number;
+    className?: string
 };
 
 export default function DropdownInput(props: Props) {
@@ -28,7 +29,7 @@ export default function DropdownInput(props: Props) {
     }, [])
 
     return (
-        <Menu as="div" className="relative block text-left mt-1">
+        <Menu as="div" className={classNames("relative block text-left mt-1", props.className)}>
             <div>
                 <Menu.Button className="inline-flex w-full justify-center rounded-md border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 shadow-sm hover:bg-slate-600">
                     {selectedValue || 'Choose...'}

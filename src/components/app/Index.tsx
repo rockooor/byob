@@ -16,11 +16,15 @@ import { classNames } from '../../helpers/class';
 import { VersionedTransaction } from '@solana/web3.js';
 import { Loading } from '../ui/Loading';
 import { Button } from '../ui/Button';
+import DropdownInput from '../ui/DropdownInput';
+import { BotOptions, createBotAccount, getLocalStorageBotAccounts } from '../../helpers/botAccounts';
+import MintInput from '../ui/MintInput';
+import { Token } from '../../helpers/token';
 
 export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
     const anchorWallet = useAnchorWallet();
-    const { wallet, signTransaction } = useWallet();
+    const { wallet, signTransaction, signMessage } = useWallet();
     const [actions, setActions] = useState<InitializedAction[]>([]);
     const [errorsLogs, setErrorLogs] = useState<string[]>([]);
     const [transactionModalOpen, setTransactionModalOpen] = useState(false);
@@ -30,6 +34,13 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const [webhookUrl, setWebhookUrl] = useState<string>()
     const [shareLink, setShareLink] = useState<string>()
     const [runWebhook, setRunWebhook] = useState(false)
+
+    const [botOptions, setBotOptions] = useState<BotOptions>({})
+    const [botOptionsError, setBotOptionsError] = useState('')
+
+    const setBotOption = (key: string, value: any) => {
+        setBotOptions({ ...botOptions, [key]: value })
+    }
 
     const [execMode, setExecMode] = useState('wallet')
 
@@ -175,7 +186,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                     </div>
                 </div>
                 {execMode === 'wallet' &&  (
-                    <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
+                    <div className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-900 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
                         <Switch.Group as="div" className="flex items-center justify-end mb-3">
                             <Switch.Label as="span" className="mr-3">
                                 <span className="text-sm font-medium text-slate-400">
@@ -220,11 +231,106 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                 )}
 
                 {execMode === 'bot' && (
-                    <div className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
-                        Select bot account<br />
-                        Frequency<br />
-                        Filter condition<br />
-                        Create 
+                    <div className="text-slate-200 bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-900 rounded-lg px-4 py-3 text-right sm:px-6 mb-6">
+                        <label htmlFor="first-name" className="block text-md font-medium text-slate-200">
+                            Select bot account
+                        </label>
+                        <DropdownInput
+                            className="w-64 ml-auto mb-3"
+                            name="Select bot account"
+                            set={(value) => setBotOption('botAccount', value)}
+                            values={getLocalStorageBotAccounts().map(item => ({
+                                name: `${item.publicKey.toString().slice(0, 3)}...${item.publicKey.toString().slice(-3)}`,
+                                value: item.publicKey.toString(),
+                            }))}
+                            defaultValue=""
+                        />
+
+                        <label htmlFor="first-name" className="block text-md font-medium text-slate-200">
+                            How often should the bot run (max once per minute)?
+                        </label>
+                        <div className="flex justify-end items-center">
+                            <input
+                                type="number"
+                                min="0"
+                                className="w-16 mr-3 rounded-md border-slate-700 bg-slate-800 text-slate-200"
+                                onChange={(e) => setBotOption('frequencyTimes', parseInt(e.target.value))}
+                            />
+                            times per
+                            <DropdownInput
+                                className="w-32 ml-3"
+                                name="frequency"
+                                set={(value) => setBotOption('frequencyInterval', value)}
+                                values={[
+                                    { name: 'minute', value: 'minute' },
+                                    { name: 'hour', value: 'hour' },
+                                    { name: 'day', value: 'day' },
+                                    { name: 'week', value: 'week' },
+                                    { name: 'month', value: 'month' },
+                                ]}
+                                defaultValue=""
+                            />
+                        </div>
+
+                        <label htmlFor="first-name" className="block text-md font-medium text-slate-200 mt-3">
+                            When should the transaction happen?
+                        </label>
+
+                        <div className="flex justify-end items-start">
+                            <DropdownInput
+                                className="w-64 ml-3"
+                                name="method"
+                                set={(value) => setBotOption('filterType', value)}
+                                values={[
+                                    { name: 'Price of', value: 'priceof' },
+                                    { name: 'Bot balance change of', value: 'balancechange' },
+                                ]}
+                                defaultValue=""
+                            />
+                            <div className="max-w-64 ml-3">
+                                <MintInput
+                                    name="method"
+                                    set={(value) => setBotOption('filterToken', value)}
+                                />
+                            </div>
+
+                            <DropdownInput
+                                className="w-24 ml-3"
+                                name="method"
+                                set={(value) => setBotOption('filterOperator', value)}
+                                values={[
+                                    { name: '<', value: '<' },
+                                    { name: '>', value: '>' },
+                                ]}
+                                defaultValue=""
+                            />
+
+                            <input
+                                type="number"
+                                min="0"
+                                className="w-32 mt-1 ml-3 rounded-md border-slate-700 bg-slate-800 text-slate-200"
+                                onChange={(e) => setBotOption('filterValue', parseInt(e.target.value))}
+                            />
+                        </div>
+
+                        <label htmlFor="first-name" className="block text-md font-medium text-slate-200 mt-3">
+                            Give your workflow a name
+                        </label>
+                        <input
+                            type="text"
+                            className="w-64 mt-1 ml-3 rounded-md border-slate-700 bg-slate-800 text-slate-200"
+                            onChange={(e) => setBotOption('name', e.target.value)}
+                        />
+                        
+                        <div className="mt-6">
+                            <Button onClick={() => createBotAccount(connection, anchorWallet, signMessage, actions, botOptions, setBotOptionsError)}>
+                                Create Bot Workflow
+                            </Button>
+                        </div>
+
+                        {botOptionsError  && <div className="text-red-600">
+                            {botOptionsError}
+                        </div>}
                     </div>
                 )}
 
@@ -240,7 +346,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white">
+                        <tbody className="">
                             {errorsLogs.map((log, i) => (
                                 <tr key={i} className={i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-800'}>
                                     <td className="whitespace-nowrap font-mono py-2 pl-4 pr-3 text-sm text-slate-200 sm:pl-6 border-b border-slate-700">

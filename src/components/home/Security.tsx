@@ -32,7 +32,7 @@ const tiers = [
             'Run workflows in bot mode (bots accounts are secured by your wallet), see more below',
             'Recurring execution (run from every minute to every year)',
             'Execution filter (run only if my arb is profitable)',
-            '$0.0001 SOL per trigger. Free* if bot owns a BYOB NFT (tba)',
+            '0.0001 SOL per trigger. Free* if bot owns a BYOB NFT (tba)',
         ],
     },
 ]

@@ -304,16 +304,7 @@ export const executeTransaction = async (
     }
 };
 
-export const shareTransaction = async (
-    actions: InitializedAction[],
-    setTransactionModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    addTransactionMessage: (message: string) => void,
-    resetTransactionMessages: () => void,
-    setShareLink: (link: string) => void
-) => {
-    resetTransactionMessages()
-    setTransactionModalOpen(true)
-    addTransactionMessage("Creating share link")
+export const serializeTransaction = (actions: InitializedAction[],) => {
     const serializedTransaction = actions.map((action) => {
         const state = {
             ...action.state.getState(),
@@ -326,6 +317,20 @@ export const shareTransaction = async (
             boundedInputs: action.inputs.map(action => action.boundTo)
         }
     });
+    return serializedTransaction
+}
+
+export const shareTransaction = async (
+    actions: InitializedAction[],
+    setTransactionModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    addTransactionMessage: (message: string) => void,
+    resetTransactionMessages: () => void,
+    setShareLink: (link: string) => void
+) => {
+    resetTransactionMessages()
+    setTransactionModalOpen(true)
+    addTransactionMessage("Creating share link")
+    const serializedTransaction = serializeTransaction(actions)
 
     // Store the serializedTransaction in table
     const resultRaw = await fetch(`${process.env.BACKEND_ENDPOINT}/create-link`, {

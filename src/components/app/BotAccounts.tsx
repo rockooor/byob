@@ -7,7 +7,7 @@ import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Link } from 'gatsby';
 import { Loading } from '../ui/Loading';
 import { Button } from '../ui/Button';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { CopyableText } from '../ui/CopyableText';
 import { createSignature } from '../../helpers/signMessage';
 import { appendLocalBotAccount, getLocalStorageBotAccounts, setLocalBotAccounts } from '../../helpers/botAccounts';
@@ -16,16 +16,32 @@ export const BotAccounts = (props: RouteComponentProps) => {
     const [loading, setLoading] = useState(true);
     const [creatingBotAccount, setCreatingBotAccount] = useState(false);
     const [botAccounts, setBotAccounts] = useState<{ publicKey: PublicKey }[]>()
+    const [solBalances, setSolBalances] = useState<Record<string, number>>({});
 
     const { connection } = useConnection()
     const anchorWallet = useAnchorWallet();
     const { signMessage } = useWallet()
 
     useEffect(() => {
-        getLocalStorageBotAccounts().then(setBotAccounts).then(() => {
-            setLoading(false)
-        })
+        const botAccounts = getLocalStorageBotAccounts()
+        setBotAccounts(botAccounts)
+        getSolBalances(botAccounts)
+        setLoading(false)
     }, [])
+
+    const getSolBalances = async (_botAccounts: { publicKey: PublicKey }[]) => {
+        const balances = await Promise.all((_botAccounts || []).map(async (account) => {
+            const balance = await connection.getBalance(account.publicKey);
+            return [account.publicKey.toString(), (balance / LAMPORTS_PER_SOL).toFixed(4)]
+        }))
+        setSolBalances({ 
+            ...solBalances, 
+            ...balances.reduce((acc, val) => {
+                acc[val[0]] = val[1];
+                return acc;
+            }, {}) 
+        })
+    }
 
     const getAndSetBotAccounts = async () => {
         const useLedger = localStorage.getItem("useLedger") === "true"
@@ -40,7 +56,9 @@ export const BotAccounts = (props: RouteComponentProps) => {
         const result = await resultRaw.json()
 
         setLocalBotAccounts(result.data)
-        getLocalStorageBotAccounts().then(setBotAccounts)
+        const botAccounts = getLocalStorageBotAccounts()
+        setBotAccounts(botAccounts)
+        getSolBalances(botAccounts)
     }
 
     const createBotAccount = async () => {
@@ -58,7 +76,9 @@ export const BotAccounts = (props: RouteComponentProps) => {
         const result = await resultRaw.json()
 
         appendLocalBotAccount({ publicKey: result.publicKey })
-        getLocalStorageBotAccounts().then(setBotAccounts)
+        const botAccounts = getLocalStorageBotAccounts()
+        setBotAccounts(botAccounts)
+        getSolBalances(botAccounts)
         
         setCreatingBotAccount(false)
     }
@@ -101,6 +121,9 @@ export const BotAccounts = (props: RouteComponentProps) => {
                             <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-slate-200 sm:pl-6">
                                 Account
                             </th>
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-slate-200 sm:pl-6">
+                                Sol balance
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -109,6 +132,9 @@ export const BotAccounts = (props: RouteComponentProps) => {
                             <tr key={botAccount.publicKey.toString()}>
                                 <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-slate-200 sm:pl-6 z-20">
                                     <CopyableText textToCopy={botAccount.publicKey.toString()} text={`${botAccount.publicKey.toString().slice(0, 3)}...${botAccount.publicKey.toString().slice(-3)}`} />
+                                </td>
+                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-slate-200 sm:pl-6 z-20">
+                                    {solBalances[botAccount.publicKey.toString()] || '...'}
                                 </td>
                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                     <a href={`https://solscan.io/account/${botAccount.publicKey.toString()}`} target="_blank" rel="noreferrer" className="text-indigo-700 hover:text-indigo-900">

@@ -8,7 +8,7 @@ import { getTokenList, Token } from '../../helpers/token';
 type Props = {
     name: string;
     set: (x: any) => void;
-    defaultValue: Token;
+    defaultValue?: Token;
 };
 
 const MintInput = (props: Props) => {

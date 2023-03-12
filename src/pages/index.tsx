@@ -3,6 +3,7 @@ import { Popover, Transition } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { Link } from 'gatsby';
+import { BsTwitter, BsDiscord } from 'react-icons/bs'
 
 // @ts-ignore
 import logo from "../images/logo.png";
@@ -35,6 +36,13 @@ export default function Index() {
                             </div>
                         </div>
                         <div className="flex md:items-center md:space-x-6">
+                            <a href="http://discord.gg/DC99NepSmx" target="_blank" className="text-slate-200 hover:text-slate-400 text-2xl">
+                                <BsDiscord />
+                            </a>
+                            <a href="https://twitter.com/byob_so" target="_blank" className="text-slate-200 hover:text-slate-400 text-2xl">
+                                <BsTwitter />
+                            </a>
+
                             <Link
                                 to="/app"
                             >
@@ -87,6 +95,27 @@ export default function Index() {
                                         src={logo}
                                         alt=""
                                     />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-[#111] py-6 sm:py-6">
+                    <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                        <div className="mx-auto max-w-2xl sm:text-center">
+                            <div className="flex items-center justify-center text-slate-200 gap-6">
+                                <div className="w-4xl bg-gradient-to-b from-[#111] to-slate-900 border border-slate-900 m-6 p-6 rounded-lg">
+                                    <h2 className="text-2xl font-bold">Sandstorm</h2>
+                                    <p>
+                                        Winner Versioned Tx Track
+                                    </p>
+                                </div>
+                                <div className="w-4xl bg-gradient-to-b from-[#111] to-slate-900 border border-slate-900 m-6 p-6 rounded-lg">
+                                    <h2 className="text-2xl font-bold">Sandstorm</h2>
+                                    <p>
+                                        Grand prize runner-up
+                                    </p>
                                 </div>
                             </div>
                         </div>
