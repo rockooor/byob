@@ -257,7 +257,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                             <input
                                 type="number"
                                 min="0"
-                                className="w-16 mr-3 rounded-md border-slate-700 bg-slate-800 text-slate-200"
+                                className="w-16 ml-3 mt-1 rounded-md border-slate-700 bg-slate-800 text-slate-200"
                                 onChange={(e) => setBotOption('frequencyTimes', parseInt(e.target.value))}
                             />
                             <DropdownInput
