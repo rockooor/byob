@@ -6,6 +6,7 @@ import { PageProps } from 'gatsby';
 import Navbar from '../../components/Navbar';
 import { Library } from '../../components/app/Library';
 import { BotAccounts } from '../../components/app/BotAccounts';
+import { WorkflowLogs } from '../../components/app/WorkflowLogs';
 
 const App = (props: PageProps) => {
     const wallet = useWallet();
@@ -27,6 +28,7 @@ const App = (props: PageProps) => {
                     <Index path="/app" />
                     <Library path="/app/library" />
                     <BotAccounts path="/app/botaccounts" />
+                    <WorkflowLogs path="/app/workflows/:id" />
                     <Index path="/app/:hash" />
                 </Router>
             ) : (

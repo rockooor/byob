@@ -17,9 +17,10 @@ import { VersionedTransaction } from '@solana/web3.js';
 import { Loading } from '../ui/Loading';
 import { Button } from '../ui/Button';
 import DropdownInput from '../ui/DropdownInput';
-import { BotOptions, createBotAccount, getLocalStorageBotAccounts } from '../../helpers/botAccounts';
+import { BotOptions, getLocalStorageBotAccounts } from '../../helpers/botAccounts';
 import MintInput from '../ui/MintInput';
 import { Token } from '../../helpers/token';
+import { createBotWorkflow } from '../../helpers/workflows';
 
 export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const { connection } = useConnection();
@@ -34,6 +35,8 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
     const [webhookUrl, setWebhookUrl] = useState<string>()
     const [shareLink, setShareLink] = useState<string>()
     const [runWebhook, setRunWebhook] = useState(false)
+
+    const [creatingBotWorkflow, setCreatingBotWorkflow] = useState(false)
 
     const [botOptions, setBotOptions] = useState<BotOptions>({})
     const [botOptionsError, setBotOptionsError] = useState('')
@@ -250,13 +253,13 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                             How often should the bot run (max once per minute)?
                         </label>
                         <div className="flex justify-end items-center">
+                            Every
                             <input
                                 type="number"
                                 min="0"
                                 className="w-16 mr-3 rounded-md border-slate-700 bg-slate-800 text-slate-200"
                                 onChange={(e) => setBotOption('frequencyTimes', parseInt(e.target.value))}
                             />
-                            times per
                             <DropdownInput
                                 className="w-32 ml-3"
                                 name="frequency"
@@ -323,7 +326,7 @@ export const Index = (props: RouteComponentProps<{hash: string}>) => {
                         />
                         
                         <div className="mt-6">
-                            <Button onClick={() => createBotAccount(connection, anchorWallet, signMessage, actions, botOptions, setBotOptionsError)}>
+                            <Button disabled={creatingBotWorkflow} onClick={() => createBotWorkflow(connection, anchorWallet, signMessage, actions, botOptions, setBotOptionsError, setCreatingBotWorkflow)}>
                                 Create Bot Workflow
                             </Button>
                         </div>

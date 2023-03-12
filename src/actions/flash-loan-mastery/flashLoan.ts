@@ -29,6 +29,8 @@ export const flashLoanIx = async (connection: Connection, anchorWallet: AnchorWa
     const referralResult = await getATA(connection, pool.mint, TOKENS.referrer, true, anchorWallet.publicKey);
     const { program } = setUp(connection, anchorWallet);
 
+    const userAta = await getATA(connection, pool.mint, anchorWallet.publicKey, true, anchorWallet.publicKey);
+
     const result = await flashLoan({
         program,
         borrower: anchorWallet.publicKey,
@@ -38,7 +40,7 @@ export const flashLoanIx = async (connection: Connection, anchorWallet: AnchorWa
     });
 
     return {
-        setupTxs: [referralResult.createTx],
+        setupTxs: [referralResult.createTx, userAta.createTx],
         mainTxs: [result.borrow],
         cleanupTxs: [result.repay]
     };
